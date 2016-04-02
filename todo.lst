@@ -1,0 +1,59 @@
+
+- models:
+	- forums table
+		- id
+		- creatorid
+		- title
+		- threadcount
+	- threads table
+		- id
+		- forumid
+		- creatorid
+		- title
+		- postcount
+	- posts table
+		- id
+		- threadid
+		- creatorid
+		- text
+	- users table
+		- id
+		- username
+		- password hash
+		- classid
+	- user classes table
+		- id
+		- level
+		- privileges
+			- createforum
+			- deleteforum
+			- createtopic
+			- deletetopic
+			- edit lower-level classes
+			- createposts
+			- editposts
+			- deleteposts
+
+- views:
+	- forums list page
+	- threads list page (with page#)
+	- posts list page (with page#)
+	- users list page (with page#)
+	- user view page (with admin-specific options)
+	- user posts page (with page#)
+	- classes list page (with editor)
+
+- subviews:
+	- header
+		- dynamic title
+		- links to main and users list
+	- footer
+		- render time
+		- version id
+
+- other:
+	- popular bubble?
+	- popsicle jokes?
+	- some varient of bbcode
+
+

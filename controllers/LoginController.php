@@ -3,7 +3,7 @@
 
 
 class LoginController extends Controller {
-	public static $required = ['CSRFTokenModel', 'UsersDatabaseModel'];
+	public static $required = ['CSRFTokenModel', 'UsersDatabaseModel', 'LoginModel'];
 	public static $inherited = ['LoginView', 'RegisterView', 'UserErrorView'];
 
 	public function invoke($args) {
@@ -14,7 +14,7 @@ class LoginController extends Controller {
 				} else {
 					$username = (string)$_POST['username'];
 					$password = (string)$_POST['password'];
-					if (! $this->UsersDatabaseModel->verifyLogin($username, $password)) {
+					if (! $this->LoginModel->loginUser($username, $password)) {
 						// TODO: render the login view with a message instead of user error
 						$this->renderView('UserErrorView', ['invalid login']);
 					} else {
@@ -51,6 +51,13 @@ class LoginController extends Controller {
 				}
 			} else {
 				$this->renderView('RegisterView');
+			}
+		} elseif ($args['page'] === 'logout') {
+			if ($this->LoginModel->getCurrentUser() === NULL) {
+				$this->renderView('UserErrorView', ['not logged in']);
+			} else {
+				$this->LoginModel->logoutUser();
+				echo "logged out";
 			}
 		} else {
 			$this->renderView('UserErrorView', ['invalid page']);

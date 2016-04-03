@@ -9,7 +9,7 @@ class LoginView extends View {
 
 ?>
 <p>Enter your username and password:</p>
-<form action='login' method='POST'>
+<form action='#' method='POST'>
 	username: <input type='text' name='username' placeholder='username' /><br />
 	password: <input type='password' name='password' placeholder='password' /><br />
 	<input type='hidden' name='csrf_token' value='<?php echo $this->CSRFTokenModel->get();?>' />

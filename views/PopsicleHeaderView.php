@@ -14,6 +14,8 @@ class PopsicleHeaderView extends View {
 <body>
 <div class='header'>
 	<a href='<?php echo htmlentities($mvcConfig['pathBase']); ?>'>home</a>
+	<a href='<?php echo htmlentities($mvcConfig['pathBase']); ?>login'>login</a>
+	<a href='<?php echo htmlentities($mvcConfig['pathBase']); ?>register'>register</a>
 </div>
 <?php
 

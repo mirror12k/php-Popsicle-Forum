@@ -9,7 +9,7 @@ class RegisterView extends View {
 
 ?>
 <p>Enter your desired username and password:</p>
-<form action='register' method='POST'>
+<form action='#' method='POST'>
 	username: <input type='text' name='username' placeholder='username' /><br />
 	password: <input type='password' name='password' placeholder='password' /><br />
 	repeat password: <input type='password' name='repeat_password' placeholder='password' /><br />

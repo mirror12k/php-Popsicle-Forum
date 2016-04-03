@@ -10,4 +10,5 @@
 // $router->routeRedirect('/^[^\d]/', $mvcConfig['pathBase'] . '0'); // redirect invalid path
 $router->routeMedia('media/'); // media folder
 $router->route('/^$/', 'test_controller'); // show the test controller
+$router->route('/^(?<page>login|register)$/', 'LoginController');
 

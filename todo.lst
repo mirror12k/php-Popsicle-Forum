@@ -43,6 +43,9 @@
 	- user posts page (with page#)
 	- classes list page (with editor)
 
+	- login page
+	- register page
+
 - subviews:
 	- header
 		- dynamic title

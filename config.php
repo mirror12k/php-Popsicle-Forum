@@ -10,6 +10,6 @@
 
 global $mvcConfig;
 $mvcConfig = [
-	'pathBase' => '/test/', // the root of this mvc instance
+	'pathBase' => '/popsicle/', // the root of this mvc instance
 ];
 

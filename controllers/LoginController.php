@@ -10,13 +10,12 @@ class LoginController extends Controller {
 		if ($args['page'] === 'login') {
 			if (isset($_POST['username']) and isset($_POST['password']) and isset($_POST['csrf_token'])) {
 				if (! $this->CSRFTokenModel->verify((string)$_POST['csrf_token'])) {
-					$this->renderView('UserErrorView', ['invalid csrf token']);
+					$this->renderView('LoginView', ['error' => 'invalid csrf token']);
 				} else {
 					$username = (string)$_POST['username'];
 					$password = (string)$_POST['password'];
 					if (! $this->LoginModel->loginUser($username, $password)) {
-						// TODO: render the login view with a message instead of user error
-						$this->renderView('UserErrorView', ['invalid login']);
+						$this->renderView('LoginView', ['error' => 'invalid login']);
 					} else {
 						echo "login success!";
 					}
@@ -27,23 +26,22 @@ class LoginController extends Controller {
 		} elseif ($args['page'] === 'register') {
 			if (isset($_POST['username']) and isset($_POST['password']) and isset($_POST['repeat_password']) and isset($_POST['csrf_token'])) {
 				if (! $this->CSRFTokenModel->verify((string)$_POST['csrf_token'])) {
-					$this->renderView('UserErrorView', ['invalid csrf token']);
+					$this->renderView('RegisterView', ['error' => 'invalid csrf token']);
 				} elseif ($_POST['repeat_password'] !== $_POST['password']) {
-					// TODO: render the register view with a message instead of user error
-					$this->renderView('UserErrorView', ['repeat password doesnt match']);
+					$this->renderView('RegisterView', ['password_error' => 'repeat password doesnt match']);
 				} else {
 					$username = (string)$_POST['username'];
 					$password = (string)$_POST['password'];
 					if (preg_match('/[^a-zA-Z0-9]/', $username)) {
-						$this->renderView('UserErrorView', ['username may only contain alphanumeric characters']);
+						$this->renderView('RegisterView', ['username_error' => 'username may only contain alphanumeric characters']);
 					} elseif (strlen($password) < 8) {
-						$this->renderView('UserErrorView', ['password must be at least 8 characters']);
+						$this->renderView('RegisterView', ['password_error' => 'password must be at least 8 characters']);
 					} elseif ($this->UsersDatabaseModel->getUserByUsername($username) !== NULL) {
-						$this->renderView('UserErrorView', ['username already taken']);
+						$this->renderView('RegisterView', ['username_error' => 'username already taken']);
 					} else {
 						$user = $this->UsersDatabaseModel->createUser($username, $password);
 						if ($user === NULL) {
-							$this->renderView('UserErrorView', ['failed to create user']);
+							$this->renderView('RegisterView', ['error' => 'failed to create user']);
 						} else {
 							echo "register success!";
 						}

@@ -8,6 +8,7 @@ class LoginView extends View {
 		$this->renderView('PopsicleHeaderView', [ 'title' => 'Popsicle - Login' ]);
 
 ?>
+<?php if (isset($args['error'])) { echo "<p class='error_message'>" . htmlentities($args['error']) . "</p>"; } ?>
 <p>Enter your username and password:</p>
 <form action='#' method='POST'>
 	username: <input type='text' name='username' placeholder='username' /><br />

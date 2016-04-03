@@ -34,6 +34,9 @@ abstract class Controller {
 		foreach ($class::$required as $model) {
 			$this->requireModel($model);
 		}
+		foreach ($class::$inherited as $model) {
+			$this->requireInheritedModels($model);
+		}
 	}
 
 	public function requireModel($class) {

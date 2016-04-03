@@ -8,5 +8,6 @@
 
 // add routes to the router
 // $router->routeRedirect('/^[^\d]/', $mvcConfig['pathBase'] . '0'); // redirect invalid path
+$router->routeMedia('media/'); // media folder
 $router->route('/^$/', 'test_controller'); // show the test controller
 

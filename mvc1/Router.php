@@ -4,10 +4,12 @@
 class Router {
 	private $routes;
 	private $redirects;
+	private $mediaPaths;
 
 	public function __construct() {
 		$this->routes = [];
 		$this->redirects = [];
+		$this->mediaPaths = [];
 	}
 	public function invokeController($name, $args) {
 		require "controllers/${name}.php";
@@ -28,7 +30,33 @@ class Router {
 	public function routeRedirect($regex, $location) {
 		$this->redirects[] = ['regex' => $regex, 'location' => $location];
 	}
+	public function routeMedia($matchPath, $path=NULL) {
+		if ($path === NULL) {
+			$path = $matchPath;
+		}
+		$matchPath = quotemeta($matchPath); // prevent metacharacters from messing up the regex
+		$matchPath = preg_replace('/\//', '\/', $matchPath); // good work copying perl
+		// honestly, why must people insist on the regex // syntax if they don't actually use them
+		$this->mediaPaths[] = ['regex' => '/^' . $matchPath . '(?<filepath>.*)$/', 'path' => $path];
+	}
 	public function invoke($path) {
+		// run through all possible media paths
+		foreach ($this->mediaPaths as $route) {
+			$result = preg_match($route['regex'], $path, $matches);
+			if ($result === FALSE) {
+				die("regex error in '" . $route['regex'] . "' !");
+			} elseif ($result === 1) {
+				$location = $route['path'] . $matches['filepath'];
+				$location = preg_replace('/\.\./', '', $location); // delete any double dots to prevent file traversal
+				if (file_exists($location)) {
+					// output the file
+					readfile($location);
+				} else {
+					die("file does not exist");
+				}
+				return;
+			}
+		}
 		// run through all possible redirect paths
 		foreach ($this->redirects as $route) {
 			$result = preg_match($route['regex'], $path, $matches);

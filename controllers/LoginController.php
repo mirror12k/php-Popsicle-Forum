@@ -17,7 +17,8 @@ class LoginController extends Controller {
 					if (! $this->LoginModel->loginUser($username, $password)) {
 						$this->renderView('LoginView', ['error' => 'invalid login']);
 					} else {
-						echo "login success!";
+						$this->redirect('forums');
+						// echo "login success!";
 					}
 				}
 			} else {
@@ -55,7 +56,8 @@ class LoginController extends Controller {
 				$this->renderView('UserErrorView', ['not logged in']);
 			} else {
 				$this->LoginModel->logoutUser();
-				echo "logged out";
+				$this->redirect('forums');
+				// echo "logged out";
 			}
 		} else {
 			$this->renderView('UserErrorView', ['invalid page']);

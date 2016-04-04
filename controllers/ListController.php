@@ -3,7 +3,7 @@
 
 
 class ListController extends Controller {
-	public static $required = ['ForumsDatabaseModel', 'LoginModel', 'UserClassesDatabaseModel', 'CSRFTokenModel'];
+	public static $required = ['ForumsDatabaseModel', 'ThreadsDatabaseModel', 'LoginModel', 'UserClassesDatabaseModel', 'CSRFTokenModel'];
 	public static $inherited = ['ForumsView', 'UserErrorView'];
 	public function invoke($args) {
 		if (isset($_POST['action']) and isset($_POST['csrf_token'])) {
@@ -33,8 +33,18 @@ class ListController extends Controller {
 					$this->renderView('UserErrorView', ['invalid action']);
 				}
 			}
-		} else {
+		} elseif ($args['page'] === 'forums') {
 			$this->renderView('ForumsView');
+		} elseif ($args['page'] === 'forum' and isset($args['id'])) {
+			$forum = $this->ForumsDatabaseModel->getForumById($args['id']);
+			if ($forum === NULL) {
+				$this->renderView('UserErrorView', ['invalid forum id']);
+			} else {
+				$threads = $this->ThreadsDatabaseModel->listThreadsByForumId($forum->id);
+				$this->renderView('ThreadsView', ['threads' => $threads, 'forumid' => $forum->id]);
+			}
+		} else {
+			$this->renderView('UserErrorView', ['invalid page']);
 		}
 	}
 }

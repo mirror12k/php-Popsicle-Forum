@@ -63,6 +63,17 @@ class ForumsDatabaseModel extends Model {
 	}
 
 	/**
+	* changes the threadcount of a thread by the given delta (defaults to 1)
+	*/
+	public function incrementForumThreadCount($id, $delta=1) {
+		$id = (int)$id;
+		$delta = (int)$delta;
+		$result = $this->DatabaseModel->query("UPDATE `forums` SET `threadcount`=`threadcount`+${delta} WHERE `id`=${id}");
+		return $result;
+	}
+
+
+	/**
 	* returns an array of all forums entries as Forum objects
 	*/
 	public function listForums() {

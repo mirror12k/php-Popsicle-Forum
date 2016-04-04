@@ -67,7 +67,7 @@ class Post {
 * abstracts the threads table
 */
 class ThreadsDatabaseModel extends Model {
-	public static $required = ['DatabaseModel'];
+	public static $required = ['DatabaseModel', 'ForumsDatabaseModel'];
 
 	/**
 	* return a Thread object from a table row
@@ -98,6 +98,16 @@ class ThreadsDatabaseModel extends Model {
 		}
 		$result->free();
 		return $thread;
+	}
+
+	/**
+	* changes the postcount of a thread by the given delta (defaults to 1)
+	*/
+	public function incrementThreadPostCount($id, $delta=1) {
+		$id = (int)$id;
+		$delta = (int)$delta;
+		$result = $this->DatabaseModel->query("UPDATE `threads` SET `postcount`=`postcount`+${delta} WHERE `id`=${id}");
+		return $result;
 	}
 
 	/**
@@ -145,6 +155,7 @@ class ThreadsDatabaseModel extends Model {
 		$result = $this->DatabaseModel->query("INSERT INTO `threads` (`forumid`, `creatorid`, `title`) VALUES (${forumid}, ${creatorid}, '${title}')");
 		if ($result === TRUE) {
 			$thread = $this->getThreadById($this->DatabaseModel->insert_id);
+			$this->ForumsDatabaseModel->incrementForumThreadCount($forumid);
 			$this->createPost($thread->id, $creatorid, $firstpost);
 			return $thread;
 		} else {
@@ -161,7 +172,9 @@ class ThreadsDatabaseModel extends Model {
 		$text = $this->DatabaseModel->mysql_escape_string($text);
 		$result = $this->DatabaseModel->query("INSERT INTO `posts` (`threadid`, `creatorid`, `text`) VALUES (${threadid}, ${creatorid}, '${text}')");
 		if ($result === TRUE) {
-			return $this->getPostById($this->DatabaseModel->insert_id);
+			$post = $this->getPostById($this->DatabaseModel->insert_id);
+			$this->incrementThreadPostCount($threadid);
+			return $post;
 		} else {
 			return NULL;
 		}

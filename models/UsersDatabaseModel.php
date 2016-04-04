@@ -100,7 +100,7 @@ class UsersDatabaseModel extends Model {
 	*/
 	private function getPasswordByUsername($username) {
 		$username = $this->DatabaseModel->mysql_escape_string((string)$username);
-		$result = $this->DatabaseModel->query("SELECT `password` FROM users WHERE `username`='${username}'");
+		$result = $this->DatabaseModel->query("SELECT `password` FROM `users` WHERE `username`='${username}'");
 		if (! is_object($result)) {
 			return NULL;
 		}
@@ -118,7 +118,7 @@ class UsersDatabaseModel extends Model {
 	*/
 	public function getUserById($id) {
 		$id = (int)$id;
-		$result = $this->DatabaseModel->query("SELECT `id`,`classid`, `username` FROM users WHERE `id`=${id}");
+		$result = $this->DatabaseModel->query("SELECT `id`,`classid`, `username` FROM `users` WHERE `id`=${id}");
 		if (! is_object($result)) {
 			return NULL;
 		}
@@ -136,7 +136,7 @@ class UsersDatabaseModel extends Model {
 	*/
 	public function getUserByUsername($username) {
 		$username = $this->DatabaseModel->mysql_escape_string($username);
-		$result = $this->DatabaseModel->query("SELECT `id`,`classid`, `username` FROM users WHERE `username`='${username}'");
+		$result = $this->DatabaseModel->query("SELECT `id`,`classid`, `username` FROM `users` WHERE `username`='${username}'");
 		if (! is_object($result)) {
 			return NULL;
 		}

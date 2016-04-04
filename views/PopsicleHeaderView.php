@@ -5,7 +5,6 @@ class PopsicleHeaderView extends View {
 	public static $required = ['LoginModel'];
 	public function render ($args) {
 		global $mvcConfig; // need the base path
-		echo "test";
 		$user = $this->LoginModel->getCurrentUser();
 
 ?><!doctype html>

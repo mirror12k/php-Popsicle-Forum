@@ -7,8 +7,8 @@
 
 
 // add routes to the router
-// $router->routeRedirect('/^[^\d]/', $mvcConfig['pathBase'] . '0'); // redirect invalid path
 $router->routeMedia('media/'); // media folder
-$router->route('/^$/', 'test_controller'); // show the test controller
+$router->routeRedirect('/^$/', $mvcConfig['pathBase'] . 'forums'); // redirect index page to forums page
+$router->route('/^(?<page>forums)$/', 'ListController');
 $router->route('/^(?<page>login|logout|register)$/', 'LoginController');
 

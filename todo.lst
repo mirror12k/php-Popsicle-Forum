@@ -5,12 +5,15 @@
 		- creatorid
 		- title
 		- threadcount
+		- locked
 	- threads table
 		- id
 		- forumid
 		- creatorid
 		- title
 		- postcount
+		- locked
+		- stickied
 	- posts table
 		- id
 		- threadid
@@ -21,6 +24,8 @@
 		- username
 		- password hash
 		- classid
+		- muted
+		- banned
 	- user classes table
 		- id
 		- level
@@ -33,6 +38,11 @@
 			- createposts
 			- editposts
 			- deleteposts
+			- mute
+			- ban
+			- lockforum
+			- lockthread
+			- stickythread
 
 - views:
 	- forums list page

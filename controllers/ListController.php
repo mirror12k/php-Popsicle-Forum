@@ -11,49 +11,77 @@ class ListController extends Controller {
 			if (! $this->CSRFTokenModel->verify((string)$_POST['csrf_token'])) {
 				$this->renderView('UserErrorView', ['invalid csrf token']);
 			} else {
-				// determine what action the user wants to take
-				if ($_POST['action'] === 'create_forum' and isset($_POST['title'])) {
-					// verify user credentials
-					$user = $this->LoginModel->getCurrentUser();
-					if ($user !== NULL and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('create_forum')) {
-						if (! preg_match('/^[a-zA-Z0-9][a-zA-Z0-9 ]*$/', (string)$_POST['title'])) {
-							$this->renderView('UserErrorView', ['forum title must be all alphanumeric or spaces with at least one character']);
-						} else {
-							$forum = $this->ForumsDatabaseModel->createForum($user->id, $_POST['title']);
-							if ($forum === NULL) {
-								$this->renderView('UserErrorView', ['error creating forum']);
-							} else {
-								$this->redirect('forum/' . $forum->id);
-							}	
-						}
-					} else {
-						$this->renderView('UserErrorView', ['invalid action']);
-					}
-				} elseif ($_POST['action'] === 'create_thread' and isset($_POST['title']) and isset($_POST['post']) and isset($args['id'])) {
-					// verify user credentials
-					$forum = $this->ForumsDatabaseModel->getForumById($args['id']);
-					$user = $this->LoginModel->getCurrentUser();
-					if ($forum !== NULL and $user !== NULL and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('create_thread')) {
-						if (! preg_match('/^[a-zA-Z0-9][a-zA-Z0-9 ]*$/', (string)$_POST['title'])) {
-							$this->renderView('UserErrorView', ['thread title must be all alphanumeric or spaces with at least one character']);
-						} elseif (strlen((string)$_POST['post']) < 1) {
-							$this->renderView('UserErrorView', ['thread post must be at least one character long']);
-						} else {
-							$thread = $this->ThreadsDatabaseModel->createThread($forum->id, $user->id, $_POST['title'], $_POST['post']);
-							if ($thread === NULL) {
-								$this->renderView('UserErrorView', ['error creating thread']);
-							} else {
-								$this->redirect('../thread/' . $thread->id);
-							}
-						}
-					} else {
-						$this->renderView('UserErrorView', ['invalid action']);
-					}
-				} else {
-					$this->renderView('UserErrorView', ['invalid action']);
-				}
+				$this->invokeAction($args);
 			}
-		} elseif ($args['page'] === 'forums') {
+		} else {
+			$this->invokePage($args);
+		}
+	}
+
+	public function invokeAction($args) {
+		// determine what action the user wants to take
+		if ($_POST['action'] === 'create_forum' and isset($_POST['title'])) {
+			// verify user credentials
+			$user = $this->LoginModel->getCurrentUser();
+			if ($user !== NULL and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('create_forum')) {
+				if (! preg_match('/^[a-zA-Z0-9][a-zA-Z0-9 ]*$/', (string)$_POST['title'])) {
+					$this->renderView('UserErrorView', ['forum title must be all alphanumeric or spaces with at least one character']);
+				} else {
+					$forum = $this->ForumsDatabaseModel->createForum($user->id, $_POST['title']);
+					if ($forum === NULL) {
+						$this->renderView('UserErrorView', ['error creating forum']);
+					} else {
+						$this->redirect('forum/' . $forum->id);
+					}	
+				}
+			} else {
+				$this->renderView('UserErrorView', ['invalid action']);
+			}
+		} elseif ($_POST['action'] === 'create_thread' and isset($_POST['title']) and isset($_POST['post']) and isset($args['id'])) {
+			// verify user credentials
+			$forum = $this->ForumsDatabaseModel->getForumById($args['id']);
+			$user = $this->LoginModel->getCurrentUser();
+			if ($forum !== NULL and $user !== NULL and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('create_thread')) {
+				if (! preg_match('/^[a-zA-Z0-9][a-zA-Z0-9 ]*$/', (string)$_POST['title'])) {
+					$this->renderView('UserErrorView', ['thread title must be all alphanumeric or spaces with at least one character']);
+				} elseif (strlen((string)$_POST['post']) < 1) {
+					$this->renderView('UserErrorView', ['thread post must be at least one character long']);
+				} else {
+					$thread = $this->ThreadsDatabaseModel->createThread($forum->id, $user->id, $_POST['title'], $_POST['post']);
+					if ($thread === NULL) {
+						$this->renderView('UserErrorView', ['error creating thread']);
+					} else {
+						$this->redirect('../thread/' . $thread->id);
+					}
+				}
+			} else {
+				$this->renderView('UserErrorView', ['invalid action']);
+			}
+		} elseif ($_POST['action'] === 'create_post' and isset($_POST['post']) and isset($args['id'])) {
+			// verify user credentials
+			$thread = $this->ThreadsDatabaseModel->getThreadById($args['id']);
+			$user = $this->LoginModel->getCurrentUser();
+			if ($thread !== NULL and $user !== NULL and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('create_post')) {
+				if (strlen((string)$_POST['post']) < 1) {
+					$this->renderView('UserErrorView', ['post must be at least one character long']);
+				} else {
+					$post = $this->ThreadsDatabaseModel->createPost($thread->id, $user->id, $_POST['post']);
+					if ($post === NULL) {
+						$this->renderView('UserErrorView', ['error creating post']);
+					} else {
+						$this->redirect('../thread/' . $thread->id);
+					}
+				}
+			} else {
+				$this->renderView('UserErrorView', ['invalid action']);
+			}
+		} else {
+			$this->renderView('UserErrorView', ['invalid action']);
+		}
+	}
+
+	public function invokePage($args) {
+		if ($args['page'] === 'forums') {
 			$this->renderView('ForumsView');
 		} elseif ($args['page'] === 'forum' and isset($args['id'])) {
 			$forum = $this->ForumsDatabaseModel->getForumById($args['id']);

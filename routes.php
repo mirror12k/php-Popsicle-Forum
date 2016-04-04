@@ -10,6 +10,6 @@
 $router->routeMedia('media/'); // media folder
 $router->routeRedirect('/^$/', $mvcConfig['pathBase'] . 'forums'); // redirect index page to forums page
 $router->route('/^(?<page>forums)$/', 'ListController');
-$router->route('/^(?<page>forum)\/(?<id>\d+)$/', 'ListController');
+$router->route('/^(?<page>forum|thread)\/(?<id>\d+)$/', 'ListController');
 $router->route('/^(?<page>login|logout|register)$/', 'LoginController');
 

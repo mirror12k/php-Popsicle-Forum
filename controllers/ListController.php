@@ -63,6 +63,14 @@ class ListController extends Controller {
 				$threads = $this->ThreadsDatabaseModel->listThreadsByForumId($forum->id);
 				$this->renderView('ThreadsView', ['threads' => $threads, 'forumid' => $forum->id]);
 			}
+		} elseif ($args['page'] === 'thread' and isset($args['id'])) {
+			$thread = $this->ThreadsDatabaseModel->getThreadById($args['id']);
+			if ($thread === NULL) {
+				$this->renderView('UserErrorView', ['invalid thread id']);
+			} else {
+				$posts = $this->ThreadsDatabaseModel->listPostsByThreadId($thread->id);
+				$this->renderView('PostsView', ['posts' => $posts, 'threadid' => $thread->id]);
+			}
 		} else {
 			$this->renderView('UserErrorView', ['invalid page']);
 		}

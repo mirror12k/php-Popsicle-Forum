@@ -23,7 +23,7 @@ class ThreadsView extends View {
 ?>
 </ul>
 <?php
-		// if the user is privileged, show him the create_forum form
+		// if the user is privileged, show him the create_thread form
 		$user = $this->LoginModel->getCurrentUser();
 		if ($user !== NULL and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('create_thread')) {
 ?>

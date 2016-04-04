@@ -111,24 +111,6 @@ class ThreadsDatabaseModel extends Model {
 	}
 
 	/**
-	* returns a Post object or null for a given id
-	*/
-	public function getPostById($id) {
-		$id = (int)$id;
-		$result = $this->DatabaseModel->query("SELECT * FROM `posts` WHERE `id`=${id}");
-		if (! is_object($result)) {
-			return NULL;
-		}
-		if ($result->num_rows === 0) {
-			$post = NULL;
-		} else {
-			$post = $this->renderPost($result->fetch_assoc());
-		}
-		$result->free();
-		return $post;
-	}
-
-	/**
 	* returns an array of all threads entries in a given forum as Thread objects
 	*/
 	public function listThreadsByForumId($id) {
@@ -161,6 +143,41 @@ class ThreadsDatabaseModel extends Model {
 		} else {
 			return NULL;
 		}
+	}
+
+	/**
+	* returns a Post object or null for a given id
+	*/
+	public function getPostById($id) {
+		$id = (int)$id;
+		$result = $this->DatabaseModel->query("SELECT * FROM `posts` WHERE `id`=${id}");
+		if (! is_object($result)) {
+			return NULL;
+		}
+		if ($result->num_rows === 0) {
+			$post = NULL;
+		} else {
+			$post = $this->renderPost($result->fetch_assoc());
+		}
+		$result->free();
+		return $post;
+	}
+
+	/**
+	* returns an array of all threads entries in a given forum as Thread objects
+	*/
+	public function listPostsByThreadId($id) {
+		$id = (int)$id;
+		$result = $this->DatabaseModel->query("SELECT * FROM `posts` WHERE `threadid`=${id}");
+		if (! is_object($result)) {
+			return [];
+		}
+		$posts = [];
+		while ($row = $result->fetch_assoc()) {
+			array_push($posts, $this->renderPost($row));
+		}
+		$result->free();
+		return $posts;
 	}
 
 	/**

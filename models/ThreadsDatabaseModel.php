@@ -111,11 +111,13 @@ class ThreadsDatabaseModel extends Model {
 	}
 
 	/**
-	* returns an array of all threads entries in a given forum as Thread objects
+	* returns an array of thread entries (maximum of $count) in a given forum as Thread objects (starting at index $index)
 	*/
-	public function listThreadsByForumId($id) {
+	public function listThreadsByForumId($id, $index=0, $count=15) {
 		$id = (int)$id;
-		$result = $this->DatabaseModel->query("SELECT * FROM `threads` WHERE `forumid`=${id}");
+		$index = (int)$index;
+		$count = (int)$count;
+		$result = $this->DatabaseModel->query("SELECT * FROM `threads` WHERE `forumid`=${id} LIMIT ${index}, ${count}");
 		if (! is_object($result)) {
 			return [];
 		}

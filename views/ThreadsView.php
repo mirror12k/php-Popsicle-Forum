@@ -38,6 +38,16 @@ class ThreadsView extends View {
 <?php
 		}
 
+		if (isset($args['prevPage'])) {
+			?><b><a href="<?php echo '?index=' . htmlentities($args['prevPage']); ?>">&lt;</a></b><?php
+		}
+		if (isset($args['thisPage'])) {
+			?><b> <?php echo htmlentities($args['thisPage']); ?> </b><?php
+		}
+		if (isset($args['nextPage'])) {
+			?><b><a href="<?php echo '?index=' . htmlentities($args['nextPage']); ?>">&gt;</a></b><?php
+		}
+
 
 		$this->renderView('PopsicleFooterView');
 	}

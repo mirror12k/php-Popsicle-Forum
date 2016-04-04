@@ -19,6 +19,8 @@ class ListController extends Controller {
 	}
 
 	public function invokeAction($args) {
+		global $mvcConfig;
+
 		// determine what action the user wants to take
 		if ($_POST['action'] === 'create_forum' and isset($_POST['title'])) {
 			// verify user credentials
@@ -31,12 +33,13 @@ class ListController extends Controller {
 					if ($forum === NULL) {
 						$this->renderView('UserErrorView', ['error creating forum']);
 					} else {
-						$this->redirect('forum/' . $forum->id);
+						$this->redirect($mvcConfig['pathBase'] . 'forum/' . $forum->id);
 					}	
 				}
 			} else {
 				$this->renderView('UserErrorView', ['invalid action']);
 			}
+
 		} elseif ($_POST['action'] === 'create_thread' and isset($_POST['title']) and isset($_POST['post']) and isset($args['id'])) {
 			// verify user credentials
 			$forum = $this->ForumsDatabaseModel->getForumById($args['id']);
@@ -51,12 +54,13 @@ class ListController extends Controller {
 					if ($thread === NULL) {
 						$this->renderView('UserErrorView', ['error creating thread']);
 					} else {
-						$this->redirect('../thread/' . $thread->id);
+						$this->redirect($mvcConfig['pathBase'] . 'thread/' . $thread->id);
 					}
 				}
 			} else {
 				$this->renderView('UserErrorView', ['invalid action']);
 			}
+
 		} elseif ($_POST['action'] === 'create_post' and isset($_POST['post']) and isset($args['id'])) {
 			// verify user credentials
 			$thread = $this->ThreadsDatabaseModel->getThreadById($args['id']);
@@ -69,12 +73,13 @@ class ListController extends Controller {
 					if ($post === NULL) {
 						$this->renderView('UserErrorView', ['error creating post']);
 					} else {
-						$this->redirect('../thread/' . $thread->id);
+						$this->redirect($mvcConfig['pathBase'] . 'thread/' . $thread->id);
 					}
 				}
 			} else {
 				$this->renderView('UserErrorView', ['invalid action']);
 			}
+
 		} else {
 			$this->renderView('UserErrorView', ['invalid action']);
 		}
@@ -83,14 +88,33 @@ class ListController extends Controller {
 	public function invokePage($args) {
 		if ($args['page'] === 'forums') {
 			$this->renderView('ForumsView');
+
 		} elseif ($args['page'] === 'forum' and isset($args['id'])) {
 			$forum = $this->ForumsDatabaseModel->getForumById($args['id']);
 			if ($forum === NULL) {
 				$this->renderView('UserErrorView', ['invalid forum id']);
 			} else {
-				$threads = $this->ThreadsDatabaseModel->listThreadsByForumId($forum->id);
-				$this->renderView('ThreadsView', ['threads' => $threads, 'forumid' => $forum->id]);
+				if (isset($_GET['index'])) {
+					$index = (int)$_GET['index'];
+					if ($index < 0) {
+						$index = 0;
+					}
+				} else {
+					$index = 0;
+				}
+				$count = 15;
+
+				$threads = $this->ThreadsDatabaseModel->listThreadsByForumId($forum->id, $index * $count, $count);
+				$viewargs = ['threads' => $threads, 'forumid' => $forum->id, 'thisPage' => $index];
+				if ($index > 0) {
+					$viewargs['prevPage'] = $index - 1;
+				}
+				if ($index + 1 < $forum->threadcount / $count) {
+					$viewargs['nextPage'] = $index + 1;
+				}
+				$this->renderView('ThreadsView', $viewargs);
 			}
+
 		} elseif ($args['page'] === 'thread' and isset($args['id'])) {
 			$thread = $this->ThreadsDatabaseModel->getThreadById($args['id']);
 			if ($thread === NULL) {
@@ -99,6 +123,7 @@ class ListController extends Controller {
 				$posts = $this->ThreadsDatabaseModel->listPostsByThreadId($thread->id);
 				$this->renderView('PostsView', ['posts' => $posts, 'threadid' => $thread->id]);
 			}
+
 		} else {
 			$this->renderView('UserErrorView', ['invalid page']);
 		}

@@ -29,11 +29,18 @@ body {
 	padding: 5px;
 }
 
+.class_privilege {
+	border: 1px solid;
+	border-color: #000;
+	padding: 2px;
+	margin: 2px;
+}
+
 .post_time {
 	color: #CCC;
 }
 
-.posts_list, .threads_list, .forums_list {
+.posts_list, .threads_list, .forums_list, .classes_list {
 	padding-left: 10%;
 	padding-right: 10%;
 }

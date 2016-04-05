@@ -150,7 +150,6 @@ class ListController extends Controller {
 
 				$this->renderView('PostsView', $viewargs);
 			}
-
 		} else {
 			$this->renderView('UserErrorView', ['invalid page']);
 		}

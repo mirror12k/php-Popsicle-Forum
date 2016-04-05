@@ -41,6 +41,14 @@ class UserClass {
 			die ("invalid permission: " . $action);
 		}
 	}
+	public function getAllPermissions() {
+		// safely shallow copy the permissions array to prevent any accidental changes
+		$all = [];
+		foreach ($this->permissions as $key => $val) {
+			$all[$key] = $val;
+		}
+		return $all;
+	}
 }
 
 
@@ -77,6 +85,20 @@ class UserClassesDatabaseModel extends Model {
 		}
 		$result->free();
 		return $class;
+	}
+
+	public function listUserClasses() {
+		$result = $this->DatabaseModel->query("SELECT * FROM `classes`");
+		if (! is_object($result)) {
+			return [];
+		}
+
+		$classes = [];
+		while ($row = $result->fetch_assoc()) {
+			array_push($classes, $this->renderUserClass($row));
+		}
+		$result->free();
+		return $classes;
 	}
 
 	/**

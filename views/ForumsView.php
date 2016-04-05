@@ -8,25 +8,20 @@ class ForumsView extends View {
 		$this->renderView('PopsicleHeaderView', [ 'title' => 'Popsicle - Forums' ]);
 
 ?>
-<ul>
+<div class='forums_list'>
 <?php
 		global $mvcConfig; // need the base path
 		foreach ($this->ForumsDatabaseModel->listForums() as $forum) {
 
 ?>
-<li>
+<div class='forum'>
 	<a href="<?php echo htmlentities($mvcConfig['pathBase'] . 'forum/' . $forum->id); ?>"><?php echo htmlentities($forum->title); ?></a>
 	: <?php echo $forum->threadcount; ?> threads
-</li>
+</div>
 <?php
 
 		}
 
-?>
-</ul>
-<p>hello world!</p>
-
-<?php
 		// if the user is privileged, show him the create_forum form
 		$user = $this->LoginModel->getCurrentUser();
 		if ($user !== NULL and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('create_forum')) {
@@ -40,6 +35,10 @@ class ForumsView extends View {
 </form>
 <?php
 		}
+
+?>
+</div>
+<?php
 
 		$this->renderView('PopsicleFooterView');
 	}

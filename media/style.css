@@ -1,12 +1,42 @@
 
 body {
 	background-color: #DDF;
+	margin: 0px;
 }
 
 .header, .footer {
 	background-color: #ECE;
+	text-align: center;
 }
 
+.post {
+	border: 2px;
+	border-color: #FFF;
+	background-color: #EEF;
+	margin: 10px;
+	padding: 5px;
+}
+
+.thread {
+	background-color: #EFE;
+	margin: 15px;
+	padding: 5px;
+}
+
+.forum {
+	background-color: #FEE;
+	margin: 15px;
+	padding: 5px;
+}
+
+.post_time {
+	color: #CCC;
+}
+
+.posts_list, .threads_list, .forums_list {
+	padding-left: 10%;
+	padding-right: 10%;
+}
 
 .error_message {
 	color: #F44;

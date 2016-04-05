@@ -10,8 +10,8 @@ class PostsView extends View {
 		$this->renderView('PopsicleHeaderView', [ 'title' => 'Popsicle - Posts' ]);
 
 ?>
+<div class='posts_list'>
 <p>viewing posts #<?php echo htmlentities($args['currentIndexStart']); ?> to #<?php echo htmlentities($args['currentIndexEnd']); ?></p>
-<ul>
 <?php
 
 		global $mvcConfig;
@@ -20,14 +20,10 @@ class PostsView extends View {
 <div class='post'>
 	<a href="<?php echo htmlentities($mvcConfig['pathBase'] . 'user/' . $post->creatorid); ?>">poster</a>
 	<div class='post_time'><?php echo htmlentities($post->timeposted) ?></div>
-	<p><?php echo htmlentities($post->text); ?></p>
+	<div class='post_text'><p><?php echo htmlentities($post->text); ?></p></div>
 </div>
 <?php
 		}
-
-?>
-</ul>
-<?php
 
 		if (isset($args['prevPage'])) {
 			?><b><a href="<?php echo '?index=' . htmlentities($args['prevPage']); ?>">&lt;</a></b><?php
@@ -52,6 +48,9 @@ class PostsView extends View {
 </form>
 <?php
 		}
+?>
+</div>
+<?php
 
 
 		$this->renderView('PopsicleFooterView');

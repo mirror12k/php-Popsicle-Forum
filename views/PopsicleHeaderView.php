@@ -15,12 +15,12 @@ class PopsicleHeaderView extends View {
 </head>
 <body>
 <div class='header'>
-	<a href='<?php echo htmlentities($mvcConfig['pathBase']); ?>'>home</a>
+	<a href='<?php echo htmlentities($mvcConfig['pathBase']); ?>'>home</a> | 
 <?php if ($user !== NULL) { ?>
-	<p>welcome <?php echo htmlentities($user->username); ?>!</p>
-	<a href='<?php echo htmlentities($mvcConfig['pathBase']); ?>logout'>logout</a>
+	<a href='<?php echo htmlentities($mvcConfig['pathBase']); ?>logout'>logout</a> | 
+	<span>welcome <?php echo htmlentities($user->username); ?>!</span>
 <?php } else { ?>
-	<a href='<?php echo htmlentities($mvcConfig['pathBase']); ?>login'>login</a>
+	<a href='<?php echo htmlentities($mvcConfig['pathBase']); ?>login'>login</a> | 
 	<a href='<?php echo htmlentities($mvcConfig['pathBase']); ?>register'>register</a>
 <?php } ?>
 </div>

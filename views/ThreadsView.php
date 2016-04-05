@@ -7,26 +7,20 @@ class ThreadsView extends View {
 		$this->renderView('PopsicleHeaderView', [ 'title' => 'Popsicle - Threads' ]);
 
 ?>
-<ul>
+<div class='threads_list'>
 <?php
 
 		global $mvcConfig;
 		foreach ($args['threads'] as $thread) {
 ?>
-<li>
-	<p>
+<div class='thread'>
 	<a href="<?php echo htmlentities($mvcConfig['pathBase'] . 'thread/' . $thread->id); ?>"><?php echo htmlentities($thread->title); ?></a>
 	: <?php echo $thread->postcount; ?> posts :
-	last posted: <?php echo htmlentities($thread->timeposted); ?> :
-	time created: <?php echo htmlentities($thread->timecreated); ?>
-	</p>
-</li>
+	<span class='post_time'>last posted: <?php echo htmlentities($thread->timeposted); ?> :
+	time created: <?php echo htmlentities($thread->timecreated); ?></span>
+</div>
 <?php
 		}
-
-?>
-</ul>
-<?php
 
 		if (isset($args['prevPage'])) {
 			?><b><a href="<?php echo '?index=' . htmlentities($args['prevPage']); ?>">&lt;</a></b><?php
@@ -52,6 +46,9 @@ class ThreadsView extends View {
 </form>
 <?php
 		}
+?>
+</div>
+<?php
 
 		$this->renderView('PopsicleFooterView');
 	}

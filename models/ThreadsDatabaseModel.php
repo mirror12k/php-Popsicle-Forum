@@ -11,6 +11,8 @@ class Thread {
 	private $creatorid;
 	private $title;
 	private $postcount;
+	private $timecreated;
+	private $timeposted;
 
 	public function __construct($data) {
 		$this->id = (int)$data['id'];
@@ -18,6 +20,8 @@ class Thread {
 		$this->creatorid = (int)$data['creatorid'];
 		$this->title = (string)$data['title'];
 		$this->postcount = (int)$data['postcount'];
+		$this->timecreated = (string)$data['timecreated'];
+		$this->timeposted = (string)$data['timeposted'];
 	}
 	public function __get($name) {
 		if ($name === 'id') {
@@ -30,6 +34,10 @@ class Thread {
 			return $this->postcount;
 		} elseif ($name === 'title') {
 			return $this->title;
+		} elseif ($name === 'timecreated') {
+			return $this->timecreated;
+		} elseif ($name === 'timeposted') {
+			return $this->timeposted;
 		}
 	}
 }
@@ -42,12 +50,14 @@ class Post {
 	private $threadid;
 	private $creatorid;
 	private $text;
+	private $timeposted;
 
 	public function __construct($data) {
 		$this->id = (int)$data['id'];
 		$this->threadid = (int)$data['threadid'];
 		$this->creatorid = (int)$data['creatorid'];
 		$this->text = (string)$data['text'];
+		$this->timeposted = (string)$data['timeposted'];
 	}
 	public function __get($name) {
 		if ($name === 'id') {
@@ -58,6 +68,8 @@ class Post {
 			return $this->creatorid;
 		} elseif ($name === 'text') {
 			return $this->text;
+		} elseif ($name === 'timeposted') {
+			return $this->timeposted;
 		}
 	}
 }
@@ -111,13 +123,23 @@ class ThreadsDatabaseModel extends Model {
 	}
 
 	/**
+	* updates the timeposted on a thread to the current time
+	*/
+	public function updateThreadTimePosted($id) {
+		$id = (int)$id;
+		$delta = (int)$delta;
+		$result = $this->DatabaseModel->query("UPDATE `threads` SET `timeposted`=UTC_TIMESTAMP() WHERE `id`=${id}");
+		return $result;
+	}
+
+	/**
 	* returns an array of thread entries (maximum of $count) in a given forum as Thread objects (starting at index $index)
 	*/
 	public function listThreadsByForumId($id, $index=0, $count=15) {
 		$id = (int)$id;
 		$index = (int)$index;
 		$count = (int)$count;
-		$result = $this->DatabaseModel->query("SELECT * FROM `threads` WHERE `forumid`=${id} ORDER BY `id` LIMIT ${index}, ${count}");
+		$result = $this->DatabaseModel->query("SELECT * FROM `threads` WHERE `forumid`=${id} ORDER BY `timeposted` DESC LIMIT ${index}, ${count}");
 		if (! is_object($result)) {
 			return [];
 		}
@@ -136,7 +158,8 @@ class ThreadsDatabaseModel extends Model {
 		$forumid = (int)$forumid;
 		$creatorid = (int)$creatorid;
 		$title = $this->DatabaseModel->mysql_escape_string($title);
-		$result = $this->DatabaseModel->query("INSERT INTO `threads` (`forumid`, `creatorid`, `title`) VALUES (${forumid}, ${creatorid}, '${title}')");
+		$result = $this->DatabaseModel->query("INSERT INTO `threads` (`forumid`, `creatorid`, `title`, `timecreated`, `timeposted`)
+				VALUES (${forumid}, ${creatorid}, '${title}', UTC_TIMESTAMP(), UTC_TIMESTAMP())");
 		if ($result === TRUE) {
 			$thread = $this->getThreadById($this->DatabaseModel->insert_id);
 			$this->ForumsDatabaseModel->incrementForumThreadCount($forumid);
@@ -191,10 +214,13 @@ class ThreadsDatabaseModel extends Model {
 		$threadid = (int)$threadid;
 		$creatorid = (int)$creatorid;
 		$text = $this->DatabaseModel->mysql_escape_string($text);
-		$result = $this->DatabaseModel->query("INSERT INTO `posts` (`threadid`, `creatorid`, `text`) VALUES (${threadid}, ${creatorid}, '${text}')");
+		$result = $this->DatabaseModel->query(
+			"INSERT INTO `posts` (`threadid`, `creatorid`, `text`, `timeposted`) VALUES (${threadid}, ${creatorid}, '${text}', UTC_TIMESTAMP())"
+		);
 		if ($result === TRUE) {
 			$post = $this->getPostById($this->DatabaseModel->insert_id);
 			$this->incrementThreadPostCount($threadid);
+			$this->updateThreadTimePosted($threadid);
 			return $post;
 		} else {
 			return NULL;

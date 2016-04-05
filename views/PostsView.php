@@ -19,6 +19,7 @@ class PostsView extends View {
 ?>
 <div class='post'>
 	<a href="<?php echo htmlentities($mvcConfig['pathBase'] . 'user/' . $post->creatorid); ?>">poster</a>
+	<div class='post_time'><?php echo htmlentities($post->timeposted) ?></div>
 	<p><?php echo htmlentities($post->text); ?></p>
 </div>
 <?php

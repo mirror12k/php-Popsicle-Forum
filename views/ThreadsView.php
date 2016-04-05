@@ -14,8 +14,12 @@ class ThreadsView extends View {
 		foreach ($args['threads'] as $thread) {
 ?>
 <li>
+	<p>
 	<a href="<?php echo htmlentities($mvcConfig['pathBase'] . 'thread/' . $thread->id); ?>"><?php echo htmlentities($thread->title); ?></a>
-	: <?php echo $thread->postcount; ?> posts
+	: <?php echo $thread->postcount; ?> posts :
+	last posted: <?php echo htmlentities($thread->timeposted); ?> :
+	time created: <?php echo htmlentities($thread->timecreated); ?>
+	</p>
 </li>
 <?php
 		}

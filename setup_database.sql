@@ -17,6 +17,8 @@ CREATE TABLE `threads` (
 	`forumid` int(11) NOT NULL,
 	`title` varchar(255) NOT NULL,
 	`postcount` int(11) NOT NULL DEFAULT 0,
+	`timecreated` DATETIME NOT NULL,
+	`timeposted` DATETIME NOT NULL,
 	UNIQUE KEY `id` (`id`)
 );
 
@@ -28,6 +30,7 @@ CREATE TABLE `posts` (
 	`creatorid` int(11) NOT NULL,
 	`threadid` int(11) NOT NULL,
 	`text` text NOT NULL,
+	`timeposted` DATETIME NOT NULL,
 	UNIQUE KEY `id` (`id`)
 );
 

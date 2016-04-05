@@ -44,7 +44,8 @@ class LoginController extends Controller {
 						if ($user === NULL) {
 							$this->renderView('RegisterView', ['error' => 'failed to create user']);
 						} else {
-							echo "register success!";
+							$this->redirect('login');
+							// echo "register success!";
 						}
 					}
 				}

@@ -117,7 +117,7 @@ class ThreadsDatabaseModel extends Model {
 		$id = (int)$id;
 		$index = (int)$index;
 		$count = (int)$count;
-		$result = $this->DatabaseModel->query("SELECT * FROM `threads` WHERE `forumid`=${id} LIMIT ${index}, ${count}");
+		$result = $this->DatabaseModel->query("SELECT * FROM `threads` WHERE `forumid`=${id} ORDER BY `id` LIMIT ${index}, ${count}");
 		if (! is_object($result)) {
 			return [];
 		}
@@ -168,9 +168,11 @@ class ThreadsDatabaseModel extends Model {
 	/**
 	* returns an array of all threads entries in a given forum as Thread objects
 	*/
-	public function listPostsByThreadId($id) {
+	public function listPostsByThreadId($id, $index=0, $count=10) {
 		$id = (int)$id;
-		$result = $this->DatabaseModel->query("SELECT * FROM `posts` WHERE `threadid`=${id}");
+		$index = (int)$index;
+		$count = (int)$count;
+		$result = $this->DatabaseModel->query("SELECT * FROM `posts` WHERE `threadid`=${id} ORDER BY `id` LIMIT ${index}, ${count}");
 		if (! is_object($result)) {
 			return [];
 		}

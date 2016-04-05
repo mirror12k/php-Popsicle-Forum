@@ -10,6 +10,7 @@ class PostsView extends View {
 		$this->renderView('PopsicleHeaderView', [ 'title' => 'Popsicle - Posts' ]);
 
 ?>
+<p>viewing posts #<?php echo htmlentities($args['currentIndexStart']); ?> to #<?php echo htmlentities($args['currentIndexEnd']); ?></p>
 <ul>
 <?php
 
@@ -26,6 +27,17 @@ class PostsView extends View {
 ?>
 </ul>
 <?php
+
+		if (isset($args['prevPage'])) {
+			?><b><a href="<?php echo '?index=' . htmlentities($args['prevPage']); ?>">&lt;</a></b><?php
+		}
+		if (isset($args['thisPage'])) {
+			?><b> <?php echo htmlentities($args['thisPage']); ?> </b><?php
+		}
+		if (isset($args['nextPage'])) {
+			?><b><a href="<?php echo '?index=' . htmlentities($args['nextPage']); ?>">&gt;</a></b><?php
+		}
+
 		// if the user is privileged, show him the create_post form
 		$user = $this->LoginModel->getCurrentUser();
 		if ($user !== NULL and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('create_post')) {

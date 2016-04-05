@@ -116,12 +116,39 @@ class ListController extends Controller {
 			}
 
 		} elseif ($args['page'] === 'thread' and isset($args['id'])) {
+
 			$thread = $this->ThreadsDatabaseModel->getThreadById($args['id']);
 			if ($thread === NULL) {
 				$this->renderView('UserErrorView', ['invalid thread id']);
 			} else {
-				$posts = $this->ThreadsDatabaseModel->listPostsByThreadId($thread->id);
-				$this->renderView('PostsView', ['posts' => $posts, 'threadid' => $thread->id]);
+				if (isset($_GET['index'])) {
+					$index = (int)$_GET['index'];
+					if ($index < 0) {
+						$index = 0;
+					}
+				} else {
+					$index = 0;
+				}
+				$count = 10;
+
+				$posts = $this->ThreadsDatabaseModel->listPostsByThreadId($thread->id, $index * $count, $count);
+				$viewargs = ['posts' => $posts, 'threadid' => $thread->id, 'thisPage' => $index];
+				if ($index > 0) {
+					$viewargs['prevPage'] = $index - 1;
+				}
+				if ($index + 1 < $thread->postcount / $count) {
+					$viewargs['nextPage'] = $index + 1;
+				}
+
+				$viewargs['currentIndexStart'] = $index * $count;
+				if ($thread->postcount > ($index + 1) * $count) {
+					$viewargs['currentIndexEnd'] = ($index + 1) * $count - 1;
+				} else {
+					$viewargs['currentIndexEnd'] = $thread->postcount - 1;
+				}
+
+
+				$this->renderView('PostsView', $viewargs);
 			}
 
 		} else {

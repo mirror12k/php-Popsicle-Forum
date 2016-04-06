@@ -182,7 +182,7 @@ class UsersDatabaseModel extends Model {
 			die('attempt to ban NULL user');
 		}
 		$id = (int)$user->id;
-		$status = (bool)$status;
+		$status = (int)$status;
 		$result = $this->DatabaseModel->query("UPDATE `users` SET `banned`=${status} WHERE `id`=${id}");
 		return $result;
 	}
@@ -195,7 +195,7 @@ class UsersDatabaseModel extends Model {
 			die('attempt to mute NULL user');
 		}
 		$id = (int)$user->id;
-		$status = (bool)$status;
+		$status = (int)$status;
 		$result = $this->DatabaseModel->query("UPDATE `users` SET `muted`=${status} WHERE `id`=${id}");
 		return $result;
 	}

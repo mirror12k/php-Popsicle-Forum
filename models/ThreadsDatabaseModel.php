@@ -118,25 +118,6 @@ class ThreadsDatabaseModel extends Model {
 	}
 
 	/**
-	* changes the postcount of a thread by the given delta (defaults to 1)
-	*/
-	public function incrementThreadPostCount($id, $delta=1) {
-		$id = (int)$id;
-		$delta = (int)$delta;
-		$result = $this->DatabaseModel->query("UPDATE `threads` SET `postcount`=`postcount`+${delta} WHERE `id`=${id}");
-		return $result;
-	}
-
-	/**
-	* updates the timeposted on a thread to the current time
-	*/
-	public function updateThreadTimePosted($id) {
-		$id = (int)$id;
-		$result = $this->DatabaseModel->query("UPDATE `threads` SET `timeposted`=UTC_TIMESTAMP() WHERE `id`=${id}");
-		return $result;
-	}
-
-	/**
 	* returns an array of thread entries (maximum of $count) in a given forum as Thread objects (starting at index $index)
 	*/
 	public function listThreadsByForumId($id, $index=0, $count=15) {
@@ -167,11 +148,44 @@ class ThreadsDatabaseModel extends Model {
 		if ($result === TRUE) {
 			$thread = $this->getThreadById($this->DatabaseModel->insert_id);
 			$this->ForumsDatabaseModel->incrementForumThreadCount($forumid);
-			$this->createPost($thread->id, $creatorid, $firstpost);
+			$this->createPost($thread, $creatorid, $firstpost);
 			return $thread;
 		} else {
 			return NULL;
 		}
+	}
+
+	/**
+	* changes the postcount of a thread by the given delta (defaults to 1)
+	*/
+	public function incrementThreadPostCount($thread, $delta=1) {
+		$id = (int)$thread->id;
+		$delta = (int)$delta;
+		$result = $this->DatabaseModel->query("UPDATE `threads` SET `postcount`=`postcount`+${delta} WHERE `id`=${id}");
+		return $result;
+	}
+
+	/**
+	* updates the timeposted on a thread to the current time
+	*/
+	public function updateThreadTimePosted($thread) {
+		$id = (int)$thread->id;
+		$result = $this->DatabaseModel->query("UPDATE `threads` SET `timeposted`=UTC_TIMESTAMP() WHERE `id`=${id}");
+		$this->ForumsDatabaseModel->updateForumTimePosted($this->ForumsDatabaseModel->getForumById($thread->forumid));
+		return $result;
+	}
+
+	/**
+	* changes the thread's lock status (0/1)
+	*/
+	public function setThreadLockedStatus($thread, $status) {
+		if ($thread === NULL) {
+			die('attempt to lock a NULL thread');
+		}
+		$id = (int)$thread->id;
+		$status = (int)$status;
+		$result = $this->DatabaseModel->query("UPDATE `threads` SET `locked`=${status} WHERE `id`=${id}");
+		return $result;
 	}
 
 	/**
@@ -214,8 +228,8 @@ class ThreadsDatabaseModel extends Model {
 	/**
 	* creates a new Post with the given data
 	*/
-	public function createPost($threadid, $creatorid, $text) {
-		$threadid = (int)$threadid;
+	public function createPost($thread, $creatorid, $text) {
+		$threadid = (int)$thread->id;
 		$creatorid = (int)$creatorid;
 		$text = $this->DatabaseModel->mysql_escape_string($text);
 		$result = $this->DatabaseModel->query(
@@ -223,24 +237,11 @@ class ThreadsDatabaseModel extends Model {
 		);
 		if ($result === TRUE) {
 			$post = $this->getPostById($this->DatabaseModel->insert_id);
-			$this->incrementThreadPostCount($threadid);
-			$this->updateThreadTimePosted($threadid);
+			$this->incrementThreadPostCount($thread);
+			$this->updateThreadTimePosted($thread);
 			return $post;
 		} else {
 			return NULL;
 		}
-	}
-
-	/**
-	* changes the thread's lock status (0/1)
-	*/
-	public function setThreadLockedStatus($thread, $status) {
-		if ($thread === NULL) {
-			die('attempt to lock a NULL thread');
-		}
-		$id = (int)$thread->id;
-		$status = (int)$status;
-		$result = $this->DatabaseModel->query("UPDATE `threads` SET `locked`=${status} WHERE `id`=${id}");
-		return $result;
 	}
 }

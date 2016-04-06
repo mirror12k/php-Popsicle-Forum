@@ -120,7 +120,7 @@ class ListController extends Controller {
 				} elseif (strlen((string)$_POST['post']) < 1) {
 					$this->renderView('UserErrorView', ['post must be at least one character long']);
 				} else {
-					$post = $this->ThreadsDatabaseModel->createPost($thread->id, $user->id, $_POST['post']);
+					$post = $this->ThreadsDatabaseModel->createPost($thread, $user->id, $_POST['post']);
 					if ($post === NULL) {
 						$this->renderView('UserErrorView', ['error creating post']);
 					} else {

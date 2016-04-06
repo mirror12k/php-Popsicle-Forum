@@ -10,6 +10,8 @@ class Forum {
 	private $creatorid;
 	private $title;
 	private $threadcount;
+	private $timecreated;
+	private $timeposted;
 	private $locked;
 
 	public function __construct($data) {
@@ -17,6 +19,8 @@ class Forum {
 		$this->creatorid = (int)$data['creatorid'];
 		$this->title = (string)$data['title'];
 		$this->threadcount = (int)$data['threadcount'];
+		$this->timecreated = (string)$data['timecreated'];
+		$this->timeposted = (string)$data['timeposted'];
 		$this->locked = (bool)$data['locked'];
 	}
 	public function __get($name) {
@@ -24,10 +28,14 @@ class Forum {
 			return $this->id;
 		} elseif ($name === 'creatorid') {
 			return $this->creatorid;
-		} elseif ($name === 'threadcount') {
-			return $this->threadcount;
 		} elseif ($name === 'title') {
 			return $this->title;
+		} elseif ($name === 'threadcount') {
+			return $this->threadcount;
+		} elseif ($name === 'timecreated') {
+			return $this->timecreated;
+		} elseif ($name === 'timeposted') {
+			return $this->timeposted;
 		} elseif ($name === 'locked') {
 			return $this->locked;
 		}
@@ -94,12 +102,22 @@ class ForumsDatabaseModel extends Model {
 	}
 
 	/**
+	* updates the timeposted on a forum to the current time
+	*/
+	public function updateForumTimePosted($forum) {
+		$id = (int)$forum->id;
+		$result = $this->DatabaseModel->query("UPDATE `forums` SET `timeposted`=UTC_TIMESTAMP() WHERE `id`=${id}");
+		return $result;
+	}
+
+	/**
 	* creates a new forum with the given title and creatorid
 	*/
 	public function createForum($creatorid, $title) {
 		$creatorid = (int)$creatorid;
 		$title = $this->DatabaseModel->mysql_escape_string($title);
-		$result = $this->DatabaseModel->query("INSERT INTO `forums` (`creatorid`, `title`) VALUES (${creatorid}, '${title}')");
+		$result = $this->DatabaseModel->query("INSERT INTO `forums` (`creatorid`, `title`, `timecreated`, `timeposted`)
+			VALUES (${creatorid}, '${title}', UTC_TIMESTAMP(), UTC_TIMESTAMP())");
 		if ($result === TRUE) {
 			return $this->getForumById($this->DatabaseModel->insert_id);
 		} else {

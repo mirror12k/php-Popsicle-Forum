@@ -24,6 +24,8 @@ class ForumsView extends View {
 	<a href="<?php echo htmlentities($mvcConfig['pathBase'] . 'forum/' . $forum->id); ?>"><?php echo htmlentities($forum->title); ?></a>
 	: created by <?php echo $this->renderView('FancyUsernameView', [$this->UsersDatabaseModel->getUserById($forum->creatorid)]); ?>
 	: <?php echo $forum->threadcount; ?> threads
+	<span class='post_time'> : last posted: <?php echo htmlentities($forum->timeposted); ?> :
+	time created: <?php echo htmlentities($forum->timecreated); ?></span>
 <?php
 				if ($args['showLockForum']) {
 					if ($forum->locked) {

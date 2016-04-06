@@ -2,7 +2,7 @@
 
 
 class ForumsView extends View {
-	public static $required = ['ForumsDatabaseModel', 'LoginModel', 'UserClassesDatabaseModel', 'CSRFTokenModel'];
+	public static $required = ['LoginModel', 'UserClassesDatabaseModel', 'CSRFTokenModel'];
 	public static $inherited = ['PopsicleHeaderView', 'PopsicleFooterView'];
 	public function render ($args) {
 		$this->renderView('PopsicleHeaderView', [ 'title' => 'Popsicle - Forums' ]);
@@ -11,7 +11,13 @@ class ForumsView extends View {
 <div class='forums_list'>
 <?php
 		global $mvcConfig; // need the base path
-		foreach ($this->ForumsDatabaseModel->listForums() as $forum) {
+		if (count($args['forums']) === 0) {
+?>
+<div class='message'>No forums have been created yet!</div>
+<?php
+
+		} else {
+			foreach ($args['forums'] as $forum) {
 
 ?>
 <div class='forum'>
@@ -20,6 +26,7 @@ class ForumsView extends View {
 </div>
 <?php
 
+			}
 		}
 
 		// if the user is privileged, show him the create_forum form

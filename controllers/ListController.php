@@ -97,7 +97,8 @@ class ListController extends Controller {
 
 	public function invokePage($args) {
 		if ($args['page'] === 'forums') {
-			$this->renderView('ForumsView');
+			$forums = $this->ForumsDatabaseModel->listForums();
+			$this->renderView('ForumsView', ['forums' => $forums]);
 
 		} elseif ($args['page'] === 'forum' and isset($args['id'])) {
 			$forum = $this->ForumsDatabaseModel->getForumById($args['id']);

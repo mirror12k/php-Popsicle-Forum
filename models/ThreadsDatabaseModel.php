@@ -132,7 +132,6 @@ class ThreadsDatabaseModel extends Model {
 	*/
 	public function updateThreadTimePosted($id) {
 		$id = (int)$id;
-		$delta = (int)$delta;
 		$result = $this->DatabaseModel->query("UPDATE `threads` SET `timeposted`=UTC_TIMESTAMP() WHERE `id`=${id}");
 		return $result;
 	}

@@ -8,6 +8,7 @@ CREATE TABLE `forums` (
 	`threadcount` int(11) NOT NULL DEFAULT 0,
 	`timecreated` DATETIME NOT NULL,
 	`timeposted` DATETIME NOT NULL,
+	`lastpostid` int(11) NOT NULL DEFAULT 0,
 	`locked` bool NOT NULL DEFAULT 0,
 	UNIQUE KEY `id` (`id`)
 );
@@ -22,6 +23,7 @@ CREATE TABLE `threads` (
 	`postcount` int(11) NOT NULL DEFAULT 0,
 	`timecreated` DATETIME NOT NULL,
 	`timeposted` DATETIME NOT NULL,
+	`lastpostid` int(11) NOT NULL DEFAULT 0,
 	`locked` bool NOT NULL DEFAULT 0,
 	UNIQUE KEY `id` (`id`)
 );

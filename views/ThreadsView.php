@@ -1,7 +1,7 @@
 <?php
 
 class ThreadsView extends View {
-	public static $required = ['CSRFTokenModel', 'UsersDatabaseModel'];
+	public static $required = ['CSRFTokenModel', 'UsersDatabaseModel', 'ThreadsDatabaseModel'];
 	public static $inherited = ['PopsicleHeaderView', 'PopsicleFooterView', 'FancyUsernameView'];
 	public function render($args) {
 		$this->renderView('PopsicleHeaderView', [ 'title' => 'Popsicle - Threads' ]);
@@ -12,11 +12,18 @@ class ThreadsView extends View {
 
 		global $mvcConfig;
 		foreach ($args['threads'] as $thread) {
+			$lastpost = $this->ThreadsDatabaseModel->getPostById($thread->lastpostid);
+			$latestPoster = $this->UsersDatabaseModel->getUserById($lastpost->creatorid);
+
+			$latestPage = (int)(($thread->postcount - 1) / 10);
+
 ?>
 <div class='thread'>
 	<a href="<?php echo htmlentities($mvcConfig['pathBase'] . 'thread/' . $thread->id); ?>"><?php echo htmlentities($thread->title); ?></a>
 	: created by <?php echo $this->renderView('FancyUsernameView', [$this->UsersDatabaseModel->getUserById($thread->creatorid)]); ?>
 	: <?php echo $thread->postcount; ?> posts
+	: <a href="<?php echo htmlentities($mvcConfig['pathBase'] . 'thread/' . $thread->id . '?index=' . $latestPage); ?>">latest post</a>
+		by <?php echo $this->renderView('FancyUsernameView', [$latestPoster]); ?>
 	<span class='post_time'> : last posted: <?php echo htmlentities($thread->timeposted); ?> :
 	time created: <?php echo htmlentities($thread->timecreated); ?></span>
 <?php

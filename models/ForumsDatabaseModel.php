@@ -9,9 +9,11 @@ class Forum {
 	private $id;
 	private $creatorid;
 	private $title;
+
 	private $threadcount;
 	private $timecreated;
 	private $timeposted;
+	private $lastpostid;
 	private $locked;
 
 	public function __construct($data) {
@@ -21,6 +23,7 @@ class Forum {
 		$this->threadcount = (int)$data['threadcount'];
 		$this->timecreated = (string)$data['timecreated'];
 		$this->timeposted = (string)$data['timeposted'];
+		$this->lastpostid = (int)$data['lastpostid'];
 		$this->locked = (bool)$data['locked'];
 	}
 	public function __get($name) {
@@ -36,6 +39,8 @@ class Forum {
 			return $this->timecreated;
 		} elseif ($name === 'timeposted') {
 			return $this->timeposted;
+		} elseif ($name === 'lastpostid') {
+			return $this->lastpostid;
 		} elseif ($name === 'locked') {
 			return $this->locked;
 		}

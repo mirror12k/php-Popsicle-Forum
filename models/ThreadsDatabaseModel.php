@@ -14,6 +14,7 @@ class Thread {
 	private $postcount;
 	private $timecreated;
 	private $timeposted;
+	private $lastpostid;
 	private $locked;
 
 	public function __construct($data) {
@@ -24,6 +25,7 @@ class Thread {
 		$this->postcount = (int)$data['postcount'];
 		$this->timecreated = (string)$data['timecreated'];
 		$this->timeposted = (string)$data['timeposted'];
+		$this->lastpostid = (int)$data['lastpostid'];
 		$this->locked = (bool)$data['locked'];
 	}
 	public function __get($name) {
@@ -41,6 +43,8 @@ class Thread {
 			return $this->timecreated;
 		} elseif ($name === 'timeposted') {
 			return $this->timeposted;
+		} elseif ($name === 'lastpostid') {
+			return $this->lastpostid;
 		} elseif ($name === 'locked') {
 			return $this->locked;
 		}
@@ -168,9 +172,10 @@ class ThreadsDatabaseModel extends Model {
 	/**
 	* updates the timeposted on a thread to the current time
 	*/
-	public function updateThreadTimePosted($thread) {
+	public function updateThreadLastPosted($thread, $post) {
 		$id = (int)$thread->id;
-		$result = $this->DatabaseModel->query("UPDATE `threads` SET `timeposted`=UTC_TIMESTAMP() WHERE `id`=${id}");
+		$postid = (int)$post->id;
+		$result = $this->DatabaseModel->query("UPDATE `threads` SET `timeposted`=UTC_TIMESTAMP(), `lastpostid`=${postid} WHERE `id`=${id}");
 		$this->ForumsDatabaseModel->updateForumTimePosted($this->ForumsDatabaseModel->getForumById($thread->forumid));
 		return $result;
 	}
@@ -238,7 +243,7 @@ class ThreadsDatabaseModel extends Model {
 		if ($result === TRUE) {
 			$post = $this->getPostById($this->DatabaseModel->insert_id);
 			$this->incrementThreadPostCount($thread);
-			$this->updateThreadTimePosted($thread);
+			$this->updateThreadLastPosted($thread, $post);
 			return $post;
 		} else {
 			return NULL;

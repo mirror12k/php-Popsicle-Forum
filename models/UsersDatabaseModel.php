@@ -60,6 +60,8 @@ class User {
 class UsersDatabaseModel extends Model {
 	public static $required = ['DatabaseModel'];
 
+	private $usersCache = [];
+
 	/**
 	* return a User object from a table row
 	*/
@@ -126,17 +128,26 @@ class UsersDatabaseModel extends Model {
 	*/
 	public function getUserById($id) {
 		$id = (int)$id;
-		$result = $this->DatabaseModel->query("SELECT `id`,`classid`, `username`, `banned`,  `muted` FROM `users` WHERE `id`=${id}");
-		if (! is_object($result)) {
-			return NULL;
-		}
-		if ($result->num_rows === 0) {
-			$user = NULL;
+
+		if (isset($this->usersCache[$id])) { // return a cached object if we have one
+			return $this->usersCache[$id];
 		} else {
-			$user = $this->renderUser($result->fetch_assoc());
+			$result = $this->DatabaseModel->query("SELECT `id`,`classid`, `username`, `banned`,  `muted` FROM `users` WHERE `id`=${id}");
+			if (! is_object($result)) {
+				return NULL;
+			}
+			if ($result->num_rows === 0) {
+				$user = NULL;
+			} else {
+				$user = $this->renderUser($result->fetch_assoc());
+			}
+
+			// cache the user by id
+			$this->usersCache[$id] = $user;
+
+			$result->free();
+			return $user;
 		}
-		$result->free();
-		return $user;
 	}
 
 	/**

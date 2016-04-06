@@ -3,8 +3,8 @@
 
 
 class PostsView extends View {
-	public static $required = ['CSRFTokenModel'];
-	public static $inherited = ['PopsicleHeaderView', 'PopsicleFooterView'];
+	public static $required = ['CSRFTokenModel', 'UsersDatabaseModel'];
+	public static $inherited = ['PopsicleHeaderView', 'PopsicleFooterView', 'FancyUsernameView'];
 	
 	public function render($args) {
 		$this->renderView('PopsicleHeaderView', [ 'title' => 'Popsicle - Posts' ]);
@@ -18,7 +18,7 @@ class PostsView extends View {
 		foreach ($args['posts'] as $post) {
 ?>
 <div class='post'>
-	<a href="<?php echo htmlentities($mvcConfig['pathBase'] . 'user/' . $post->creatorid); ?>">poster</a>
+	<?php $this->renderView('FancyUsernameView', [$this->UsersDatabaseModel->getUserById($post->creatorid)]) ?>
 	<div class='post_time'><?php echo htmlentities($post->timeposted) ?></div>
 	<div class='post_text'><p><?php echo htmlentities($post->text); ?></p></div>
 </div>

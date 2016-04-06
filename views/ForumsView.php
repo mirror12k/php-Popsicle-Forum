@@ -2,8 +2,8 @@
 
 
 class ForumsView extends View {
-	public static $required = ['CSRFTokenModel'];
-	public static $inherited = ['PopsicleHeaderView', 'PopsicleFooterView'];
+	public static $required = ['CSRFTokenModel', 'UsersDatabaseModel'];
+	public static $inherited = ['PopsicleHeaderView', 'PopsicleFooterView', 'FancyUsernameView'];
 	public function render ($args) {
 		$this->renderView('PopsicleHeaderView', [ 'title' => 'Popsicle - Forums' ]);
 
@@ -22,6 +22,7 @@ class ForumsView extends View {
 ?>
 <div class='forum'>
 	<a href="<?php echo htmlentities($mvcConfig['pathBase'] . 'forum/' . $forum->id); ?>"><?php echo htmlentities($forum->title); ?></a>
+	: created by <?php echo $this->renderView('FancyUsernameView', [$this->UsersDatabaseModel->getUserById($forum->creatorid)]); ?>
 	: <?php echo $forum->threadcount; ?> threads
 <?php
 				if ($args['showLockForum']) {

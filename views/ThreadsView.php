@@ -1,8 +1,8 @@
 <?php
 
 class ThreadsView extends View {
-	public static $required = ['CSRFTokenModel'];
-	public static $inherited = ['PopsicleHeaderView', 'PopsicleFooterView'];
+	public static $required = ['CSRFTokenModel', 'UsersDatabaseModel'];
+	public static $inherited = ['PopsicleHeaderView', 'PopsicleFooterView', 'FancyUsernameView'];
 	public function render($args) {
 		$this->renderView('PopsicleHeaderView', [ 'title' => 'Popsicle - Threads' ]);
 
@@ -15,8 +15,9 @@ class ThreadsView extends View {
 ?>
 <div class='thread'>
 	<a href="<?php echo htmlentities($mvcConfig['pathBase'] . 'thread/' . $thread->id); ?>"><?php echo htmlentities($thread->title); ?></a>
-	: <?php echo $thread->postcount; ?> posts :
-	<span class='post_time'>last posted: <?php echo htmlentities($thread->timeposted); ?> :
+	: created by <?php echo $this->renderView('FancyUsernameView', [$this->UsersDatabaseModel->getUserById($thread->creatorid)]); ?>
+	: <?php echo $thread->postcount; ?> posts
+	<span class='post_time'> : last posted: <?php echo htmlentities($thread->timeposted); ?> :
 	time created: <?php echo htmlentities($thread->timecreated); ?></span>
 <?php
 				if ($args['showLockThread']) {

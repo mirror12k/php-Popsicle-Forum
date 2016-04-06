@@ -73,6 +73,8 @@ CREATE TABLE `classes` (
 	`permission_delete_post` bool NOT NULL DEFAULT 0,
 	
 	`permission_edit_lower_class` bool NOT NULL DEFAULT 0,
+	`permission_mute_user` bool NOT NULL DEFAULT 0,
+	`permission_ban_user` bool NOT NULL DEFAULT 0,
 
 	UNIQUE KEY `id` (`id`)
 );
@@ -90,8 +92,10 @@ INSERT INTO `classes` (`name`, `level`,
 	`permission_create_post`,
 	`permission_delete_post`,
 	`permission_edit_post`,
-	`permission_edit_lower_class`
-) VALUES ('admin', 1000000, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+	`permission_edit_lower_class`,
+	`permission_mute_user`,
+	`permission_ban_user`
+) VALUES ('admin', 1000000, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 
 -- create the moderator class
 INSERT INTO `classes` (`name`, `level`,
@@ -101,8 +105,9 @@ INSERT INTO `classes` (`name`, `level`,
 	`permission_delete_thread`,
 	`permission_create_post`,
 	`permission_delete_post`,
-	`permission_edit_post`
-) VALUES ('moderator', 1000, 1, 1, 1, 1, 1, 1, 1);
+	`permission_edit_post`,
+	`permission_mute_user`
+) VALUES ('moderator', 1000, 1, 1, 1, 1, 1, 1, 1, 1);
 
 -- create the basic user class
 INSERT INTO `classes` (`name`, `level`,

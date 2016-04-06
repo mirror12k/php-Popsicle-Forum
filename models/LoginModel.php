@@ -33,7 +33,7 @@ class LoginModel extends Model {
 	}
 
 	private function loadCurrentUser() {
-		if (isset($_SESSION['PopsicleLoginModel__current_user'])) {
+		if (isset($_SESSION['PopsicleLoginModel__current_user']) and $_SESSION['PopsicleLoginModel__current_user'] !== NULL) {
 			$this->currentUser = $this->UsersDatabaseModel->getUserById($_SESSION['PopsicleLoginModel__current_user']);
 			// kick the user if they were banned while being logged in
 			if ($this->currentUser->banned) {

@@ -29,6 +29,8 @@ class UserClass {
 		$this->permissions['delete_post'] = (bool)$data['permission_delete_post'];
 
 		$this->permissions['edit_lower_class'] = (bool)$data['permission_edit_lower_class'];
+		$this->permissions['ban_user'] = (bool)$data['permission_ban_user'];
+		$this->permissions['mute_user'] = (bool)$data['permission_mute_user'];
 	}
 	public function __get($name) {
 		if ($name === 'id') {
@@ -162,4 +164,29 @@ class UserClassesDatabaseModel extends Model {
 		return $result;
 	}
 
+	/**
+	* changes the user's mute status (0/1)
+	*/
+	public function setUserMuteStatus($user, $status) {
+		if ($user === NULL) {
+			die('attempt to mute a NULL user');
+		}
+		$id = (int)$user->id;
+		$status = (int)$status;
+		$result = $this->DatabaseModel->query("UPDATE `users` SET `muted`=${status} WHERE `id`=${id}");
+		return $result;
+	}
+
+	/**
+	* changes the user's ban status (0/1)
+	*/
+	public function setUserBanStatus($user, $status) {
+		if ($user === NULL) {
+			die('attempt to ban a NULL user');
+		}
+		$id = (int)$user->id;
+		$status = (int)$status;
+		$result = $this->DatabaseModel->query("UPDATE `users` SET `banned`=${status} WHERE `id`=${id}");
+		return $result;
+	}
 }

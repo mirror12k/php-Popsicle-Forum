@@ -239,7 +239,7 @@ class ThreadsDatabaseModel extends Model {
 			die('attempt to lock a NULL thread');
 		}
 		$id = (int)$thread->id;
-		$status = (bool)$status;
+		$status = (int)$status;
 		$result = $this->DatabaseModel->query("UPDATE `threads` SET `locked`=${status} WHERE `id`=${id}");
 		return $result;
 	}

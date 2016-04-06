@@ -42,6 +42,26 @@ class ListController extends Controller {
 				$this->renderView('UserErrorView', ['invalid action']);
 			}
 
+		} elseif (($_POST['action'] === 'unlock_forum' or $_POST['action'] === 'lock_forum') and isset($_POST['forumid'])) {
+			// verify user credentials
+			$user = $this->LoginModel->getCurrentUser();
+			if ($user !== NULL and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('lock_forum')) {
+				// verify target
+				$forum = $this->ForumsDatabaseModel->getForumById($_POST['forumid']);
+				if ($forum === NULL) {
+					$this->renderView('UserErrorView', ['invalid action']);
+				} else {
+					$result = $this->ForumsDatabaseModel->setForumLockedStatus($forum, $_POST['action'] === 'lock_forum');
+					if (! $result) {
+						$this->renderView('UserErrorView', ['error setting locked status']);
+					} else {
+						$this->redirect($mvcConfig['pathBase'] . 'forums');
+					}
+				}
+			} else {
+				$this->renderView('UserErrorView', ['invalid action']);
+			}
+
 		} elseif ($_POST['action'] === 'create_thread' and isset($_POST['title']) and isset($_POST['post']) and isset($args['id'])) {
 			// verify user credentials
 			$forum = $this->ForumsDatabaseModel->getForumById($args['id']);
@@ -61,6 +81,27 @@ class ListController extends Controller {
 						$this->renderView('UserErrorView', ['error creating thread']);
 					} else {
 						$this->redirect($mvcConfig['pathBase'] . 'thread/' . $thread->id);
+					}
+				}
+			} else {
+				$this->renderView('UserErrorView', ['invalid action']);
+			}
+
+		} elseif (($_POST['action'] === 'unlock_thread' or $_POST['action'] === 'lock_thread') and isset($args['id']) and isset($_POST['threadid'])) {
+			// verify user credentials
+			$forum = $this->ForumsDatabaseModel->getForumById($args['id']);
+			$user = $this->LoginModel->getCurrentUser();
+			if ($forum !== NULL and $user !== NULL and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('lock_thread')) {
+				// verify target
+				$thread = $this->ThreadsDatabaseModel->getThreadById($_POST['threadid']);
+				if ($thread === NULL) {
+					$this->renderView('UserErrorView', ['invalid action']);
+				} else {
+					$result = $this->ThreadsDatabaseModel->setThreadLockedStatus($thread, $_POST['action'] === 'lock_thread');
+					if (! $result) {
+						$this->renderView('UserErrorView', ['error setting locked status']);
+					} else {
+						$this->redirect($mvcConfig['pathBase'] . 'forum/' . $forum->id);
 					}
 				}
 			} else {

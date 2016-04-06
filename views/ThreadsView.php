@@ -24,6 +24,7 @@ class ThreadsView extends View {
 ?>
 	<form action='<?php echo htmlentities($mvcConfig['pathBase'] . 'forum/' . $args['forumid']); ?>' method='POST'>
 		<input type='hidden' name='action' value='unlock_thread' />
+		<input type='hidden' name='threadid' value='<?php echo htmlentities($thread->id); ?>' />
 		<input type='hidden' name='csrf_token' value='<?php echo htmlentities($this->CSRFTokenModel->get()); ?>' />
 		<button>unlock thread</button>
 	</form>
@@ -32,6 +33,7 @@ class ThreadsView extends View {
 ?>
 	<form action='<?php echo htmlentities($mvcConfig['pathBase'] . 'forum/' . $args['forumid']); ?>' method='POST'>
 		<input type='hidden' name='action' value='lock_thread' />
+		<input type='hidden' name='threadid' value='<?php echo htmlentities($thread->id); ?>' />
 		<input type='hidden' name='csrf_token' value='<?php echo htmlentities($this->CSRFTokenModel->get()); ?>' />
 		<button>lock thread</button>
 	</form>

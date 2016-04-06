@@ -110,12 +110,12 @@ class ForumsDatabaseModel extends Model {
 	/**
 	* changes the forum's lock status (0/1)
 	*/
-	public function setThreadLockedStatus($forum, $status) {
+	public function setForumLockedStatus($forum, $status) {
 		if ($forum === NULL) {
 			die('attempt to lock a NULL forum');
 		}
 		$id = (int)$forum->id;
-		$status = (bool)$status;
+		$status = (int)$status;
 		$result = $this->DatabaseModel->query("UPDATE `forums` SET `locked`=${status} WHERE `id`=${id}");
 		return $result;
 	}

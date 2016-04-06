@@ -29,6 +29,7 @@ class ForumsView extends View {
 ?>
 	<form action='<?php echo htmlentities($mvcConfig['pathBase'] . 'forums'); ?>' method='POST'>
 		<input type='hidden' name='action' value='unlock_forum' />
+		<input type='hidden' name='forumid' value='<?php echo htmlentities($forum->id); ?>' />
 		<input type='hidden' name='csrf_token' value='<?php echo htmlentities($this->CSRFTokenModel->get()); ?>' />
 		<button>unlock forum</button>
 	</form>
@@ -37,6 +38,7 @@ class ForumsView extends View {
 ?>
 	<form action='<?php echo htmlentities($mvcConfig['pathBase'] . 'forums'); ?>' method='POST'>
 		<input type='hidden' name='action' value='lock_forum' />
+		<input type='hidden' name='forumid' value='<?php echo htmlentities($forum->id); ?>' />
 		<input type='hidden' name='csrf_token' value='<?php echo htmlentities($this->CSRFTokenModel->get()); ?>' />
 		<button>lock forum</button>
 	</form>

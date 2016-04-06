@@ -26,7 +26,9 @@ class ListController extends Controller {
 			// verify user credentials
 			$user = $this->LoginModel->getCurrentUser();
 			if ($user !== NULL and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('create_forum')) {
-				if (! preg_match('/^[a-zA-Z0-9][a-zA-Z0-9 ]*$/', (string)$_POST['title'])) {
+				if ($user->muted) {
+					$this->renderView('UserErrorView', ['user muted']);
+				} elseif (! preg_match('/^[a-zA-Z0-9][a-zA-Z0-9 ]*$/', (string)$_POST['title'])) {
 					$this->renderView('UserErrorView', ['forum title must be all alphanumeric or spaces with at least one character']);
 				} else {
 					$forum = $this->ForumsDatabaseModel->createForum($user->id, $_POST['title']);
@@ -45,7 +47,9 @@ class ListController extends Controller {
 			$forum = $this->ForumsDatabaseModel->getForumById($args['id']);
 			$user = $this->LoginModel->getCurrentUser();
 			if ($forum !== NULL and $user !== NULL and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('create_thread')) {
-				if (! preg_match('/^[a-zA-Z0-9][a-zA-Z0-9 ]*$/', (string)$_POST['title'])) {
+				if ($user->muted) {
+					$this->renderView('UserErrorView', ['user muted']);
+				} elseif (! preg_match('/^[a-zA-Z0-9][a-zA-Z0-9 ]*$/', (string)$_POST['title'])) {
 					$this->renderView('UserErrorView', ['thread title must be all alphanumeric or spaces with at least one character']);
 				} elseif (strlen((string)$_POST['post']) < 1) {
 					$this->renderView('UserErrorView', ['thread post must be at least one character long']);
@@ -66,7 +70,9 @@ class ListController extends Controller {
 			$thread = $this->ThreadsDatabaseModel->getThreadById($args['id']);
 			$user = $this->LoginModel->getCurrentUser();
 			if ($thread !== NULL and $user !== NULL and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('create_post')) {
-				if (strlen((string)$_POST['post']) < 1) {
+				if ($user->muted) {
+					$this->renderView('UserErrorView', ['user muted']);
+				} elseif (strlen((string)$_POST['post']) < 1) {
 					$this->renderView('UserErrorView', ['post must be at least one character long']);
 				} else {
 					$post = $this->ThreadsDatabaseModel->createPost($thread->id, $user->id, $_POST['post']);

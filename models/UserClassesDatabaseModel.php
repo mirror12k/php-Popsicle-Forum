@@ -135,6 +135,15 @@ class UserClassesDatabaseModel extends Model {
 	}
 
 	/**
+	* shortcut to updating multiple permissions
+	*/
+	public function updateUserClassPermissions($class, $permissions) {
+		foreach ($permissions as $key => $val) {
+			$this->setPermission($class, $key, $val);
+		}
+	}
+
+	/**
 	* sets a permission for a given class
 	*/
 	public function setPermission($class, $permission, $value) {

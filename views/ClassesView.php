@@ -3,8 +3,11 @@
 
 
 class ClassesView extends View {
+	public static $required = ['CSRFTokenModel'];
 	public static $inherited = ['PopsicleHeaderView', 'PopsicleFooterView'];
 	public function render($args) {
+		global $mvcConfig;
+
 		$this->renderView('PopsicleHeaderView', [ 'title' => 'Popsicle - Administration - Classes' ]);
 
 ?>
@@ -14,6 +17,10 @@ class ClassesView extends View {
 		foreach ($args['classes'] as $class) {
 ?>
 <div class='class'>
+<form action='<?php echo htmlentities($mvcConfig['pathBase'] . 'admin/classes'); ?>' method='POST'>
+<input type='hidden' name='action' value='edit_class' />
+<input type='hidden' name='csrf_token' value='<?php echo htmlentities($this->CSRFTokenModel->get()); ?>' />
+<input type='hidden' name='classid' value='<?php echo htmlentities($class->id); ?>' />
 <?php
 			echo htmlentities($class->name . ' : ' . $class->level) . "<br />";
 
@@ -26,6 +33,8 @@ class ClassesView extends View {
 <?php
 			}
 ?>
+<button>Save</button>
+</form>
 </div>
 <?php
 		}

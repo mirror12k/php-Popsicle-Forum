@@ -10,12 +10,14 @@ class Forum {
 	private $creatorid;
 	private $title;
 	private $threadcount;
+	private $locked;
 
 	public function __construct($data) {
 		$this->id = (int)$data['id'];
 		$this->creatorid = (int)$data['creatorid'];
 		$this->title = (string)$data['title'];
 		$this->threadcount = (int)$data['threadcount'];
+		$this->locked = (bool)$data['locked'];
 	}
 	public function __get($name) {
 		if ($name === 'id') {
@@ -26,6 +28,8 @@ class Forum {
 			return $this->threadcount;
 		} elseif ($name === 'title') {
 			return $this->title;
+		} elseif ($name === 'locked') {
+			return $this->locked;
 		}
 	}
 }
@@ -101,5 +105,18 @@ class ForumsDatabaseModel extends Model {
 		} else {
 			return NULL;
 		}
+	}
+
+	/**
+	* changes the forum's lock status (0/1)
+	*/
+	public function setThreadLockedStatus($forum, $status) {
+		if ($forum === NULL) {
+			die('attempt to lock a NULL forum');
+		}
+		$id = (int)$forum->id;
+		$status = (bool)$status;
+		$result = $this->DatabaseModel->query("UPDATE `forums` SET `locked`=${status} WHERE `id`=${id}");
+		return $result;
 	}
 }

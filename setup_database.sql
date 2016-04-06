@@ -6,6 +6,7 @@ CREATE TABLE `forums` (
 	`creatorid` int(11) NOT NULL,
 	`title` varchar(255) NOT NULL,
 	`threadcount` int(11) NOT NULL DEFAULT 0,
+	`locked` bool NOT NULL DEFAULT 0,
 	UNIQUE KEY `id` (`id`)
 );
 
@@ -19,6 +20,7 @@ CREATE TABLE `threads` (
 	`postcount` int(11) NOT NULL DEFAULT 0,
 	`timecreated` DATETIME NOT NULL,
 	`timeposted` DATETIME NOT NULL,
+	`locked` bool NOT NULL DEFAULT 0,
 	UNIQUE KEY `id` (`id`)
 );
 

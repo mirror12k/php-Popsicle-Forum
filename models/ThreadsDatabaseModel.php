@@ -10,9 +10,11 @@ class Thread {
 	private $forumid;
 	private $creatorid;
 	private $title;
+
 	private $postcount;
 	private $timecreated;
 	private $timeposted;
+	private $locked;
 
 	public function __construct($data) {
 		$this->id = (int)$data['id'];
@@ -22,6 +24,7 @@ class Thread {
 		$this->postcount = (int)$data['postcount'];
 		$this->timecreated = (string)$data['timecreated'];
 		$this->timeposted = (string)$data['timeposted'];
+		$this->locked = (bool)$data['locked'];
 	}
 	public function __get($name) {
 		if ($name === 'id') {
@@ -38,6 +41,8 @@ class Thread {
 			return $this->timecreated;
 		} elseif ($name === 'timeposted') {
 			return $this->timeposted;
+		} elseif ($name === 'locked') {
+			return $this->locked;
 		}
 	}
 }
@@ -225,5 +230,18 @@ class ThreadsDatabaseModel extends Model {
 		} else {
 			return NULL;
 		}
+	}
+
+	/**
+	* changes the thread's lock status (0/1)
+	*/
+	public function setThreadLockedStatus($thread, $status) {
+		if ($thread === NULL) {
+			die('attempt to lock a NULL thread');
+		}
+		$id = (int)$thread->id;
+		$status = (bool)$status;
+		$result = $this->DatabaseModel->query("UPDATE `threads` SET `locked`=${status} WHERE `id`=${id}");
+		return $result;
 	}
 }

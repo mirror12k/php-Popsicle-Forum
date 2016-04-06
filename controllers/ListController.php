@@ -49,6 +49,8 @@ class ListController extends Controller {
 			if ($forum !== NULL and $user !== NULL and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('create_thread')) {
 				if ($user->muted) {
 					$this->renderView('UserErrorView', ['user muted']);
+				} elseif ($forum->locked) {
+					$this->renderView('UserErrorView', ['forum locked']);
 				} elseif (! preg_match('/^[a-zA-Z0-9][a-zA-Z0-9 ]*$/', (string)$_POST['title'])) {
 					$this->renderView('UserErrorView', ['thread title must be all alphanumeric or spaces with at least one character']);
 				} elseif (strlen((string)$_POST['post']) < 1) {
@@ -72,6 +74,8 @@ class ListController extends Controller {
 			if ($thread !== NULL and $user !== NULL and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('create_post')) {
 				if ($user->muted) {
 					$this->renderView('UserErrorView', ['user muted']);
+				} elseif ($thread->locked) {
+					$this->renderView('UserErrorView', ['thread locked']);
 				} elseif (strlen((string)$_POST['post']) < 1) {
 					$this->renderView('UserErrorView', ['post must be at least one character long']);
 				} else {

@@ -183,7 +183,7 @@ class UsersDatabaseModel extends Model {
 		}
 		$id = (int)$user->id;
 		$status = (bool)$status;
-		$result = $this->DatabaseModel->query("UPDATE `users` SET `banned`=$status WHERE `id`=${id}");
+		$result = $this->DatabaseModel->query("UPDATE `users` SET `banned`=${status} WHERE `id`=${id}");
 		return $result;
 	}
 
@@ -196,7 +196,7 @@ class UsersDatabaseModel extends Model {
 		}
 		$id = (int)$user->id;
 		$status = (bool)$status;
-		$result = $this->DatabaseModel->query("UPDATE `users` SET `muted`=$status WHERE `id`=${id}");
+		$result = $this->DatabaseModel->query("UPDATE `users` SET `muted`=${status} WHERE `id`=${id}");
 		return $result;
 	}
 }

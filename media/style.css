@@ -36,6 +36,13 @@ body {
 	margin: 2px;
 }
 
+.user_desc {
+	text-align: center;
+	padding: 5% 10% 5% 10%;
+	margin: 5% 15% 5% 15%;
+	background-color: #FFF;
+}
+
 .post_time {
 	color: #CCC;
 }

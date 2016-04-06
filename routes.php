@@ -12,5 +12,6 @@ $router->routeRedirect('/^$/', $mvcConfig['pathBase'] . 'forums'); // redirect i
 $router->route('/^(?<page>forums)$/', 'ListController');
 $router->route('/^(?<page>forum|thread)\/(?<id>\d+)$/', 'ListController');
 $router->route('/^(?<page>login|logout|register)$/', 'LoginController');
+$router->route('/^(?<page>user)\/(?<id>\d+)$/', 'UserController');
 $router->route('/^admin\/(?<page>classes)$/', 'AdminstrationController');
 

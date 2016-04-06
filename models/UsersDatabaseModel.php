@@ -28,11 +28,15 @@ class User {
 	private $id;
 	private $username;
 	private $classid;
+	private $banned;
+	private $muted;
 
 	public function __construct($data) {
 		$this->id = (int)$data['id'];
 		$this->classid = (int)$data['classid'];
 		$this->username = (string)$data['username'];
+		$this->banned = (bool)$data['banned'];
+		$this->muted = (bool)$data['muted'];
 	}
 	public function __get($name) {
 		if ($name === 'id') {
@@ -41,6 +45,10 @@ class User {
 			return $this->classid;
 		} elseif ($name === 'username') {
 			return $this->username;
+		} elseif ($name === 'banned') {
+			return $this->banned;
+		} elseif ($name === 'muted') {
+			return $this->muted;
 		}
 	}
 }
@@ -118,7 +126,7 @@ class UsersDatabaseModel extends Model {
 	*/
 	public function getUserById($id) {
 		$id = (int)$id;
-		$result = $this->DatabaseModel->query("SELECT `id`,`classid`, `username` FROM `users` WHERE `id`=${id}");
+		$result = $this->DatabaseModel->query("SELECT `id`,`classid`, `username`, `banned`,  `muted` FROM `users` WHERE `id`=${id}");
 		if (! is_object($result)) {
 			return NULL;
 		}
@@ -136,7 +144,7 @@ class UsersDatabaseModel extends Model {
 	*/
 	public function getUserByUsername($username) {
 		$username = $this->DatabaseModel->mysql_escape_string($username);
-		$result = $this->DatabaseModel->query("SELECT `id`,`classid`, `username` FROM `users` WHERE `username`='${username}'");
+		$result = $this->DatabaseModel->query("SELECT `id`,`classid`, `username`, `banned`,  `muted` FROM `users` WHERE `username`='${username}'");
 		if (! is_object($result)) {
 			return NULL;
 		}
@@ -164,5 +172,31 @@ class UsersDatabaseModel extends Model {
 		} else {
 			return NULL;
 		}
+	}
+
+	/**
+	* changes the user's ban status (0/1)
+	*/
+	public function setUserBannedStatus($user, $status) {
+		if ($user === NULL) {
+			die('attempt to ban NULL user');
+		}
+		$id = (int)$user->id;
+		$status = (bool)$status;
+		$result = $this->DatabaseModel->query("UPDATE `users` SET `banned`=$status WHERE `id`=${id}");
+		return $result;
+	}
+
+	/**
+	* changes the user's mute status (0/1)
+	*/
+	public function setUserMutedStatus($user, $status) {
+		if ($user === NULL) {
+			die('attempt to mute NULL user');
+		}
+		$id = (int)$user->id;
+		$status = (bool)$status;
+		$result = $this->DatabaseModel->query("UPDATE `users` SET `muted`=$status WHERE `id`=${id}");
+		return $result;
 	}
 }

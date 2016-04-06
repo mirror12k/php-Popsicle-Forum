@@ -14,11 +14,14 @@ class LoginController extends Controller {
 				} else {
 					$username = (string)$_POST['username'];
 					$password = (string)$_POST['password'];
-					if (! $this->LoginModel->loginUser($username, $password)) {
+					$status = $this->LoginModel->loginUser($username, $password);
+					if ($status === FALSE) { // failed login
 						$this->renderView('LoginView', ['error' => 'invalid login']);
-					} else {
+					} elseif ($status === TRUE) { // successful login
 						$this->redirect('forums');
 						// echo "login success!";
+					} else { // else likely a ban message
+						$this->renderView('LoginView', ['error' => $status]);
 					}
 				}
 			} else {

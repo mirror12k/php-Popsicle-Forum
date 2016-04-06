@@ -8,11 +8,21 @@ class LoginModel extends Model {
 
 	public function loginUser($username, $password) {
 		if ($this->UsersDatabaseModel->verifyLogin($username, $password)) {
-			$this->setLoggedInUser($this->UsersDatabaseModel->getUserByUsername($username));
-			return TRUE;
+			$user = $this->UsersDatabaseModel->getUserByUsername($username);
+			if ($user->banned) {
+				return 'user is banned';
+			} else {
+				$this->setLoggedInUser($user);
+				return TRUE;
+			}
 		} else {
 			return FALSE;
 		}
+	}
+
+	public function logoutUser() {
+		unset($_SESSION['PopsicleLoginModel__current_user']);
+		$this->currentUser = NULL;
 	}
 
 	public function getCurrentUser() {
@@ -25,6 +35,10 @@ class LoginModel extends Model {
 	private function loadCurrentUser() {
 		if (isset($_SESSION['PopsicleLoginModel__current_user'])) {
 			$this->currentUser = $this->UsersDatabaseModel->getUserById($_SESSION['PopsicleLoginModel__current_user']);
+			// kick the user if they were banned while being logged in
+			if ($this->currentUser->banned) {
+				$this->logoutUser();
+			}
 		} else {
 			$this->currentUser = NULL;
 		}
@@ -33,10 +47,5 @@ class LoginModel extends Model {
 	private function setLoggedInUser($user) {
 		$_SESSION['PopsicleLoginModel__current_user'] = $user->id;
 		$this->currentUser = $user;
-	}
-
-	public function logoutUser() {
-		unset($_SESSION['PopsicleLoginModel__current_user']);
-		$this->currentUser = NULL;
 	}
 }

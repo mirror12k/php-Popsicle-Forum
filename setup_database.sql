@@ -43,6 +43,8 @@ CREATE TABLE `users` (
 	`username` varchar(64) NOT NULL,
 	-- 16 byte hex salt + 1 byte seperator + 64 byte hex sha256 hash
 	`password` varchar(81) NOT NULL,
+	`banned` bool NOT NULL DEFAULT 0,
+	`muted` bool NOT NULL DEFAULT 0,
 	UNIQUE KEY `id` (`id`)
 );
 

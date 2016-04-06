@@ -23,6 +23,27 @@ class ForumsView extends View {
 <div class='forum'>
 	<a href="<?php echo htmlentities($mvcConfig['pathBase'] . 'forum/' . $forum->id); ?>"><?php echo htmlentities($forum->title); ?></a>
 	: <?php echo $forum->threadcount; ?> threads
+<?php
+				if ($args['showLockForum']) {
+					if ($forum->locked) {
+?>
+	<form action='<?php echo htmlentities($mvcConfig['pathBase'] . 'forums'); ?>' method='POST'>
+		<input type='hidden' name='action' value='unlock_forum' />
+		<input type='hidden' name='csrf_token' value='<?php echo htmlentities($this->CSRFTokenModel->get()); ?>' />
+		<button>unlock forum</button>
+	</form>
+<?php
+					} else {
+?>
+	<form action='<?php echo htmlentities($mvcConfig['pathBase'] . 'forums'); ?>' method='POST'>
+		<input type='hidden' name='action' value='lock_forum' />
+		<input type='hidden' name='csrf_token' value='<?php echo htmlentities($this->CSRFTokenModel->get()); ?>' />
+		<button>lock forum</button>
+	</form>
+<?php
+					}
+				}
+?>
 </div>
 <?php
 

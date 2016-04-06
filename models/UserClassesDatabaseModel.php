@@ -17,12 +17,17 @@ class UserClass {
 		$this->level = (int)$data['level'];
 		$this->permissions = [];
 		$this->permissions['create_forum'] = (bool)$data['permission_create_forum'];
+		$this->permissions['lock_forum'] = (bool)$data['permission_lock_forum'];
 		$this->permissions['delete_forum'] = (bool)$data['permission_delete_forum'];
+
 		$this->permissions['create_thread'] = (bool)$data['permission_create_thread'];
+		$this->permissions['lock_thread'] = (bool)$data['permission_lock_thread'];
 		$this->permissions['delete_thread'] = (bool)$data['permission_delete_thread'];
+
 		$this->permissions['create_post'] = (bool)$data['permission_create_post'];
-		$this->permissions['delete_post'] = (bool)$data['permission_delete_post'];
 		$this->permissions['edit_post'] = (bool)$data['permission_edit_post'];
+		$this->permissions['delete_post'] = (bool)$data['permission_delete_post'];
+
 		$this->permissions['edit_lower_class'] = (bool)$data['permission_edit_lower_class'];
 	}
 	public function __get($name) {

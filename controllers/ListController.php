@@ -105,6 +105,7 @@ class ListController extends Controller {
 			$viewargs['showCreateForum'] = ($user !== NULL and (! $user->muted)
 				and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('create_forum'));
 			$viewargs['showMuted'] = ($user !== NULL and $user->muted);
+			$viewargs['showLockForum'] = ($user !== NULL and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('lock_forum'));
 
 			$this->renderView('ForumsView', $viewargs);
 
@@ -137,6 +138,7 @@ class ListController extends Controller {
 				$viewargs['showCreateThread'] = ($user !== NULL and (! $user->muted)
 					and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('create_thread'));
 				$viewargs['showMuted'] = ($user !== NULL and $user->muted);
+				$viewargs['showLockThread'] = ($user !== NULL and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('lock_thread'));
 
 				$this->renderView('ThreadsView', $viewargs);
 			}

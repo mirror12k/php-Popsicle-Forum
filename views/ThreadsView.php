@@ -18,6 +18,27 @@ class ThreadsView extends View {
 	: <?php echo $thread->postcount; ?> posts :
 	<span class='post_time'>last posted: <?php echo htmlentities($thread->timeposted); ?> :
 	time created: <?php echo htmlentities($thread->timecreated); ?></span>
+<?php
+				if ($args['showLockThread']) {
+					if ($thread->locked) {
+?>
+	<form action='<?php echo htmlentities($mvcConfig['pathBase'] . 'forum/' . $args['forumid']); ?>' method='POST'>
+		<input type='hidden' name='action' value='unlock_thread' />
+		<input type='hidden' name='csrf_token' value='<?php echo htmlentities($this->CSRFTokenModel->get()); ?>' />
+		<button>unlock thread</button>
+	</form>
+<?php
+					} else {
+?>
+	<form action='<?php echo htmlentities($mvcConfig['pathBase'] . 'forum/' . $args['forumid']); ?>' method='POST'>
+		<input type='hidden' name='action' value='lock_thread' />
+		<input type='hidden' name='csrf_token' value='<?php echo htmlentities($this->CSRFTokenModel->get()); ?>' />
+		<button>lock thread</button>
+	</form>
+<?php
+					}
+				}
+?>
 </div>
 <?php
 		}

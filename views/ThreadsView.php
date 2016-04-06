@@ -1,7 +1,7 @@
 <?php
 
 class ThreadsView extends View {
-	public static $required = ['UserClassesDatabaseModel', 'LoginModel', 'CSRFTokenModel'];
+	public static $required = ['CSRFTokenModel'];
 	public static $inherited = ['PopsicleHeaderView', 'PopsicleFooterView'];
 	public function render($args) {
 		$this->renderView('PopsicleHeaderView', [ 'title' => 'Popsicle - Threads' ]);
@@ -32,9 +32,7 @@ class ThreadsView extends View {
 			?><b><a href="<?php echo '?index=' . htmlentities($args['nextPage']); ?>">&gt;</a></b><?php
 		}
 
-		// if the user is privileged, show him the create_thread form
-		$user = $this->LoginModel->getCurrentUser();
-		if ($user !== NULL and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('create_thread')) {
+		if ($args['showCreateThread']) {
 ?>
 <p>Create Thread:</p>
 <form action='<?php echo htmlentities($mvcConfig['pathBase'] . 'forum/' . $args['forumid']); ?>' method='POST'>
@@ -44,6 +42,11 @@ class ThreadsView extends View {
 	<input type='hidden' name='csrf_token' value='<?php echo htmlentities($this->CSRFTokenModel->get()); ?>' />
 	<button>submit</button>
 </form>
+<?php
+
+		} elseif ($args['showMuted']) {
+?>
+<div class='message'>User is Muted!</div>
 <?php
 		}
 ?>

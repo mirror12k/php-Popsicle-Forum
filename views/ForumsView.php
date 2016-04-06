@@ -2,7 +2,7 @@
 
 
 class ForumsView extends View {
-	public static $required = ['LoginModel', 'UserClassesDatabaseModel', 'CSRFTokenModel'];
+	public static $required = ['CSRFTokenModel'];
 	public static $inherited = ['PopsicleHeaderView', 'PopsicleFooterView'];
 	public function render ($args) {
 		$this->renderView('PopsicleHeaderView', [ 'title' => 'Popsicle - Forums' ]);
@@ -29,9 +29,7 @@ class ForumsView extends View {
 			}
 		}
 
-		// if the user is privileged, show him the create_forum form
-		$user = $this->LoginModel->getCurrentUser();
-		if ($user !== NULL and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('create_forum')) {
+		if ($args['showCreateForum']) {
 ?>
 <p>Create forum:</p>
 <form action='<?php echo htmlentities($mvcConfig['pathBase'] . 'forums'); ?>' method='POST'>
@@ -40,6 +38,11 @@ class ForumsView extends View {
 	<input type='hidden' name='csrf_token' value='<?php echo htmlentities($this->CSRFTokenModel->get()); ?>' />
 	<button>submit</button>
 </form>
+<?php
+
+		} elseif ($args['showMuted']) {
+?>
+<div class='message'>User is Muted!</div>
 <?php
 		}
 

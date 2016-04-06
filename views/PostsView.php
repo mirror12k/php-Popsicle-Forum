@@ -3,7 +3,7 @@
 
 
 class PostsView extends View {
-	public static $required = ['UserClassesDatabaseModel', 'LoginModel', 'CSRFTokenModel'];
+	public static $required = ['CSRFTokenModel'];
 	public static $inherited = ['PopsicleHeaderView', 'PopsicleFooterView'];
 	
 	public function render($args) {
@@ -35,9 +35,7 @@ class PostsView extends View {
 			?><b><a href="<?php echo '?index=' . htmlentities($args['nextPage']); ?>">&gt;</a></b><?php
 		}
 
-		// if the user is privileged, show him the create_post form
-		$user = $this->LoginModel->getCurrentUser();
-		if ($user !== NULL and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('create_post')) {
+		if ($args['showCreatePost']) {
 ?>
 <p>Reply:</p>
 <form action='<?php echo htmlentities($mvcConfig['pathBase'] . 'thread/' . $args['threadid']); ?>' method='POST'>
@@ -46,6 +44,11 @@ class PostsView extends View {
 	<input type='hidden' name='csrf_token' value='<?php echo htmlentities($this->CSRFTokenModel->get()); ?>' />
 	<button>submit</button>
 </form>
+<?php
+
+		} elseif ($args['showMuted']) {
+?>
+<div class='message'>User is Muted!</div>
 <?php
 		}
 ?>

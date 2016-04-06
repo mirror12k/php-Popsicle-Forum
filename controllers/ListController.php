@@ -97,8 +97,16 @@ class ListController extends Controller {
 
 	public function invokePage($args) {
 		if ($args['page'] === 'forums') {
+			// get the forums to display
 			$forums = $this->ForumsDatabaseModel->listForums();
-			$this->renderView('ForumsView', ['forums' => $forums]);
+			$viewargs = ['forums' => $forums];
+			// if the user is privileged, show him the create_forum form
+			$user = $this->LoginModel->getCurrentUser();
+			$viewargs['showCreateForum'] = ($user !== NULL and (! $user->muted)
+				and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('create_forum'));
+			$viewargs['showMuted'] = ($user !== NULL and $user->muted);
+
+			$this->renderView('ForumsView', $viewargs);
 
 		} elseif ($args['page'] === 'forum' and isset($args['id'])) {
 			$forum = $this->ForumsDatabaseModel->getForumById($args['id']);
@@ -123,6 +131,13 @@ class ListController extends Controller {
 				if ($index + 1 < $forum->threadcount / $count) {
 					$viewargs['nextPage'] = $index + 1;
 				}
+
+				// if the user is privileged, show him the create_thread form
+				$user = $this->LoginModel->getCurrentUser();
+				$viewargs['showCreateThread'] = ($user !== NULL and (! $user->muted)
+					and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('create_thread'));
+				$viewargs['showMuted'] = ($user !== NULL and $user->muted);
+
 				$this->renderView('ThreadsView', $viewargs);
 			}
 
@@ -158,6 +173,11 @@ class ListController extends Controller {
 					$viewargs['currentIndexEnd'] = $thread->postcount - 1;
 				}
 
+				// if the user is privileged, show him the create_post form
+				$user = $this->LoginModel->getCurrentUser();
+				$viewargs['showCreatePost'] = ($user !== NULL and (! $user->muted)
+					and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('create_post'));
+				$viewargs['showMuted'] = ($user !== NULL and $user->muted);
 
 				$this->renderView('PostsView', $viewargs);
 			}

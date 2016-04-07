@@ -19,7 +19,7 @@ class AdminstrationController extends Controller {
 		if (! (isset($_POST['csrf_token']) and $this->CSRFTokenModel->verify((string)$_POST['csrf_token']))) {
 			$this->renderView('UserErrorView', ['invalid csrf token']);
 		} else {
-			if ($_POST['action'] === 'edit_class' and $args['page'] === 'classes' and isset($_POST['classid'])) {
+			if ($_POST['action'] === 'edit_class' and $args['page'] === 'classes' and isset($_POST['classid']) and isset($_POST['color'])) {
 				$class = $this->UserClassesDatabaseModel->getUserClassById((int)$_POST['classid']);
 				$user = $this->LoginModel->getCurrentUser();
 				$userclass = $this->UserClassesDatabaseModel->getUserClassByUser($user);
@@ -47,6 +47,16 @@ class AdminstrationController extends Controller {
 						}
 					}
 					$this->UserClassesDatabaseModel->updateUserClassPermissions($class, $privileges);
+
+					$color = (string)$_POST['color'];
+					if ($color !== $class->color) {
+						if (! preg_match('/^[a-fA-F0-9]{6}$/', $color)) {
+							$this->renderView('UserErrorView', ['color must be exactly 6 hexidecimal characters']);
+						} else {
+							$this->UserClassesDatabaseModel->setUserClassColor($class, $color);
+						}
+					}
+
 					echo "success";
 				}
 			} else {

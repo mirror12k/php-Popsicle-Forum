@@ -21,8 +21,13 @@ class ClassesView extends View {
 <input type='hidden' name='action' value='edit_class' />
 <input type='hidden' name='csrf_token' value='<?php echo htmlentities($this->CSRFTokenModel->get()); ?>' />
 <input type='hidden' name='classid' value='<?php echo htmlentities($class->id); ?>' />
+
+<div class='class_title'>
+	Class name: <input type='text' name='name' value='<?php echo htmlentities($class->name); ?>' /><br />
+	Class level: <input type='text' name='level' value='<?php echo htmlentities($class->level); ?>' /><br />
+	Class color: <input type='text' name='color' value='<?php echo htmlentities($class->color); ?>' />
+</div>
 <?php
-			echo htmlentities($class->name . ' : ' . $class->level) . "<br />";
 
 			foreach ($class->getAllPermissions() as $key => $val) {
 ?>

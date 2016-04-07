@@ -2,7 +2,7 @@
 
 
 class ForumsView extends View {
-	public static $required = ['CSRFTokenModel', 'UsersDatabaseModel'];
+	public static $required = ['CSRFTokenModel', 'UsersDatabaseModel', 'ThreadsDatabaseModel'];
 	public static $inherited = ['PopsicleHeaderView', 'PopsicleFooterView', 'FancyUsernameView'];
 	public function render ($args) {
 		$this->renderView('PopsicleHeaderView', [ 'title' => 'Popsicle - Forums' ]);
@@ -24,8 +24,24 @@ class ForumsView extends View {
 	<a href="<?php echo htmlentities($mvcConfig['pathBase'] . 'forum/' . $forum->id); ?>"><?php echo htmlentities($forum->title); ?></a>
 	: created by <?php echo $this->renderView('FancyUsernameView', [$this->UsersDatabaseModel->getUserById($forum->creatorid)]); ?>
 	: <?php echo $forum->threadcount; ?> threads
-	<span class='post_time'> : last posted: <?php echo htmlentities($forum->timeposted); ?> :
-	time created: <?php echo htmlentities($forum->timecreated); ?></span>
+<?php
+				if ($forum->lastpostid !== 0) {
+					$lastpost = $this->ThreadsDatabaseModel->getPostById($forum->lastpostid);
+					$latestPoster = $this->UsersDatabaseModel->getUserById($lastpost->creatorid);
+					$thread = $this->ThreadsDatabaseModel->getThreadById($lastpost->threadid);
+
+					$latestPage = (int)(($thread->postcount - 1) / 10);
+?>
+	: <a href="<?php echo htmlentities($mvcConfig['pathBase'] . 'thread/' . $thread->id . '?index=' . $latestPage); ?>">latest post</a>
+		by <?php echo $this->renderView('FancyUsernameView', [$latestPoster]); ?>
+		in thread <a href="<?php echo htmlentities($mvcConfig['pathBase'] . 'thread/' . $thread->id); ?>"><?php echo htmlentities($thread->title); ?></a>
+<?php
+				}
+?>
+	<span class='post_time'>
+		: last posted: <?php echo htmlentities($forum->timeposted); ?>
+		: time created: <?php echo htmlentities($forum->timecreated); ?>
+	</span>
 <?php
 				if ($args['showLockForum']) {
 					if ($forum->locked) {

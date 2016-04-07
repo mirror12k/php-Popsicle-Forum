@@ -176,7 +176,7 @@ class ThreadsDatabaseModel extends Model {
 		$id = (int)$thread->id;
 		$postid = (int)$post->id;
 		$result = $this->DatabaseModel->query("UPDATE `threads` SET `timeposted`=UTC_TIMESTAMP(), `lastpostid`=${postid} WHERE `id`=${id}");
-		$this->ForumsDatabaseModel->updateForumTimePosted($this->ForumsDatabaseModel->getForumById($thread->forumid));
+		$this->ForumsDatabaseModel->updateForumLastPosted($thread->forumid, $postid);
 		return $result;
 	}
 

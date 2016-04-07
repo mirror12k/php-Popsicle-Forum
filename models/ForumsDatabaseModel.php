@@ -89,6 +89,16 @@ class ForumsDatabaseModel extends Model {
 		return $result;
 	}
 
+	/**
+	* updates the timeposted on a forum to the current time
+	*/
+	public function updateForumLastPosted($id, $lastpostid) {
+		$id = (int)$id;
+		$lastpostid = (int)$lastpostid;
+		$result = $this->DatabaseModel->query("UPDATE `forums` SET `timeposted`=UTC_TIMESTAMP(), `lastpostid`=${lastpostid} WHERE `id`=${id}");
+		return $result;
+	}
+
 
 	/**
 	* returns an array of all forums entries as Forum objects
@@ -104,15 +114,6 @@ class ForumsDatabaseModel extends Model {
 		}
 		$result->free();
 		return $forums;
-	}
-
-	/**
-	* updates the timeposted on a forum to the current time
-	*/
-	public function updateForumTimePosted($forum) {
-		$id = (int)$forum->id;
-		$result = $this->DatabaseModel->query("UPDATE `forums` SET `timeposted`=UTC_TIMESTAMP() WHERE `id`=${id}");
-		return $result;
 	}
 
 	/**

@@ -24,8 +24,10 @@ class ThreadsView extends View {
 	: <?php echo $thread->postcount; ?> posts
 	: <a href="<?php echo htmlentities($mvcConfig['pathBase'] . 'thread/' . $thread->id . '?index=' . $latestPage); ?>">latest post</a>
 		by <?php echo $this->renderView('FancyUsernameView', [$latestPoster]); ?>
-	<span class='post_time'> : last posted: <?php echo htmlentities($thread->timeposted); ?> :
-	time created: <?php echo htmlentities($thread->timecreated); ?></span>
+	<span class='post_time'>
+		: last posted: <?php echo htmlentities($thread->timeposted); ?>
+		: time created: <?php echo htmlentities($thread->timecreated); ?>
+	</span>
 <?php
 				if ($args['showLockThread']) {
 					if ($thread->locked) {

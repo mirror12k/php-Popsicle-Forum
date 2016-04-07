@@ -62,6 +62,7 @@ CREATE TABLE `classes` (
 	`id` int(11) NOT NULL auto_increment,
 	`name` varchar(64) NOT NULL,
 	`level` int(11) NOT NULL,
+	`color` char(6) NOT NULL DEFAULT '000000',
 
 	-- all of the permissions we have available
 	`permission_create_forum` bool NOT NULL DEFAULT 0,

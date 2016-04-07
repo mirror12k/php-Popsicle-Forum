@@ -7,7 +7,9 @@ class FancyUsernameView extends View {
 		global $mvcConfig;
 		$user = $args[0];
 ?>
-<a href="<?php echo htmlentities($mvcConfig['pathBase'] . 'user/' . $user->id); ?>"><?php echo htmlentities($user->username); ?></a>
+<a href="<?php echo htmlentities($mvcConfig['pathBase'] . 'user/' . $user->id); ?>" class="username userclass_<?php echo htmlentities((int)$user->classid); ?>">
+	<?php echo htmlentities($user->username); ?>
+</a>
 <?php
 	}
 }

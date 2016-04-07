@@ -17,7 +17,7 @@ class AdminstrationController extends Controller {
 
 	public function invokeAction($args) {
 		if (! (isset($_POST['csrf_token']) and $this->CSRFTokenModel->verify((string)$_POST['csrf_token']))) {
-			$this->renderView('UserErrorView', ['error' => 'invalid csrf token']);
+			$this->renderView('UserErrorView', ['invalid csrf token']);
 		} else {
 			if ($_POST['action'] === 'edit_class' and $args['page'] === 'classes' and isset($_POST['classid'])) {
 				$class = $this->UserClassesDatabaseModel->getUserClassById((int)$_POST['classid']);

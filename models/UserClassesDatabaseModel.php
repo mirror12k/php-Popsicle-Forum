@@ -9,12 +9,14 @@ class UserClass {
 	private $id;
 	private $name;
 	private $level;
+	private $color;
 	public $permissions;
 
 	public function __construct($data) {
 		$this->id = (int)$data['id'];
 		$this->name = (string)$data['name'];
 		$this->level = (int)$data['level'];
+		$this->color = (string)$data['color'];
 		$this->permissions = [];
 		$this->permissions['create_forum'] = (bool)$data['permission_create_forum'];
 		$this->permissions['lock_forum'] = (bool)$data['permission_lock_forum'];
@@ -39,6 +41,8 @@ class UserClass {
 			return $this->name;
 		} elseif ($name === 'level') {
 			return $this->level;
+		} elseif ($name === 'color') {
+			return $this->color;
 		}
 	}
 	public function can($action) {
@@ -160,33 +164,44 @@ class UserClassesDatabaseModel extends Model {
 		$id = (int)$class->id;
 		$class->can($permission); // UserClass will die unless $permission is a valid permission name
 		$value = (int)$value;
-		$result = $this->DatabaseModel->query("UPDATE `classes` SET `permission_${permission}` = $value WHERE `id`=${id}");
+		$result = $this->DatabaseModel->query("UPDATE `classes` SET `permission_${permission}`=$value WHERE `id`=${id}");
 		return $result;
 	}
 
 	/**
-	* changes the user's mute status (0/1)
+	* sets a user class's highlight color
 	*/
-	public function setUserMuteStatus($user, $status) {
-		if ($user === NULL) {
-			die('attempt to mute a NULL user');
+	public function setUserClassColor($class, $value) {
+		if ($class === NULL) {
+			die('attempt to set color to NULL class');
 		}
-		$id = (int)$user->id;
-		$status = (int)$status;
-		$result = $this->DatabaseModel->query("UPDATE `users` SET `muted`=${status} WHERE `id`=${id}");
+		$id = (int)$class->id;
+		$value = (string)$value;
+		if (! preg_match('/^[a-fA-F0-9]{6}$/', $value)) {
+			die('invalid color for class: ' . $value);
+		}
+		$result = $this->DatabaseModel->query("UPDATE `classes` SET `color`='${value}' WHERE `id`=${id}");
+
+		$this->writeUserClassesStylesheet();
 		return $result;
 	}
 
-	/**
-	* changes the user's ban status (0/1)
-	*/
-	public function setUserBanStatus($user, $status) {
-		if ($user === NULL) {
-			die('attempt to ban a NULL user');
+	public function writeUserClassesStylesheet() {
+		$file = fopen('media/userclasses.css', 'w');
+		if ($file === FALSE) {
+			die("failed to open media/userclasses.css!");
 		}
-		$id = (int)$user->id;
-		$status = (int)$status;
-		$result = $this->DatabaseModel->query("UPDATE `users` SET `banned`=${status} WHERE `id`=${id}");
-		return $result;
+		$classes = $this->listUserClasses();
+		fwrite($file,
+"/*
+* this file is automatically written by popsicle
+* any changes will be over written
+*/\n\n");
+		foreach ($classes as $class) {
+			fwrite($file, ".userclass_" . $class->id . " {\n");
+			fwrite($file, "\tcolor: #" . $class->color . ";\n");
+			fwrite($file, "}\n\n");
+		}
+		fclose($file);
 	}
 }

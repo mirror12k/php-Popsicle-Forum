@@ -12,6 +12,7 @@ class PopsicleHeaderView extends View {
 <head>
 	<title><?php echo htmlentities($args['title']); ?></title>
 	<link rel='stylesheet' type='text/css' href='<?php echo htmlentities($mvcConfig['pathBase']); ?>media/style.css' />
+	<link rel='stylesheet' type='text/css' href='<?php echo htmlentities($mvcConfig['pathBase']); ?>media/userclasses.css' />
 </head>
 <body>
 <div class='header'>

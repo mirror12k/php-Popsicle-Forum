@@ -169,6 +169,37 @@ class UserClassesDatabaseModel extends Model {
 	}
 
 	/**
+	* sets a user class's name
+	*/
+	public function setUserClassName($class, $value) {
+		if ($class === NULL) {
+			die('attempt to set name to NULL class');
+		}
+		$id = (int)$class->id;
+		$value = (string)$value;
+		if (! preg_match('/^[a-zA-Z0-9][a-zA-Z0-9 ]{0,63}$/', $value)) {
+			die('invalid name for class: ' . $value);
+		}
+
+		$result = $this->DatabaseModel->query("UPDATE `classes` SET `name`='${value}' WHERE `id`=${id}");
+		return $result;
+	}
+
+	/**
+	* sets a user class's level
+	*/
+	public function setUserClassLevel($class, $value) {
+		if ($class === NULL) {
+			die('attempt to set level to NULL class');
+		}
+		$id = (int)$class->id;
+		$value = (int)$value;
+
+		$result = $this->DatabaseModel->query("UPDATE `classes` SET `level`=${value} WHERE `id`=${id}");
+		return $result;
+	}
+
+	/**
 	* sets a user class's highlight color
 	*/
 	public function setUserClassColor($class, $value) {
@@ -186,6 +217,9 @@ class UserClassesDatabaseModel extends Model {
 		return $result;
 	}
 
+	/**
+	* writes all the color rules from the classes table to the 'media/userclasses.css' file
+	*/
 	public function writeUserClassesStylesheet() {
 		$file = fopen('media/userclasses.css', 'w');
 		if ($file === FALSE) {

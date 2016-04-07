@@ -19,7 +19,11 @@ class AdminstrationController extends Controller {
 		if (! (isset($_POST['csrf_token']) and $this->CSRFTokenModel->verify((string)$_POST['csrf_token']))) {
 			$this->renderView('UserErrorView', ['invalid csrf token']);
 		} else {
-			if ($_POST['action'] === 'edit_class' and $args['page'] === 'classes' and isset($_POST['classid']) and isset($_POST['color'])) {
+			if ($_POST['action'] === 'edit_class'
+					and $args['page'] === 'classes'
+					and isset($_POST['classid'])
+					and isset($_POST['name'])
+					and isset($_POST['color'])) {
 				$class = $this->UserClassesDatabaseModel->getUserClassById((int)$_POST['classid']);
 				$user = $this->LoginModel->getCurrentUser();
 				$userclass = $this->UserClassesDatabaseModel->getUserClassByUser($user);
@@ -28,6 +32,39 @@ class AdminstrationController extends Controller {
 				} elseif ($class->level >= $userclass->level) {
 					$this->renderView('UserErrorView', ['cannot edit classes of higher or equal user class level']);
 				} else {
+					$name = (string)$_POST['name'];
+					if ($name !== $class->name) {
+						if (! preg_match('/^[a-zA-Z0-9][a-zA-Z0-9 ]{0,63}$/', $name)) {
+							$this->renderView('UserErrorView', ['name must be exactly be alphanumeric, max 64 characters']);
+							return;
+						} else {
+							$this->UserClassesDatabaseModel->setUserClassName($class, $name);
+						}
+					}
+
+					$level = (int)$_POST['level'];
+					if ($level !== $class->level) {
+						if ($level < 0) {
+							$this->renderView('UserErrorView', ['level must be at least 0']);
+							return;
+						} elseif ($level >= $userclass->level) {
+							$this->renderView('UserErrorView', ['level must be below your own level']);
+							return;
+						} else {
+							$this->UserClassesDatabaseModel->setUserClassLevel($class, $level);
+						}
+					}
+
+					$color = (string)$_POST['color'];
+					if ($color !== $class->color) {
+						if (! preg_match('/^[a-fA-F0-9]{6}$/', $color)) {
+							$this->renderView('UserErrorView', ['color must be exactly 6 hexidecimal characters']);
+							return;
+						} else {
+							$this->UserClassesDatabaseModel->setUserClassColor($class, $color);
+						}
+					}
+
 					$privileges = $class->getAllPermissions();
 					foreach (array_keys($privileges) as $key) {
 						if (isset($_POST[$key]) and $_POST[$key] === 'on') {
@@ -47,15 +84,6 @@ class AdminstrationController extends Controller {
 						}
 					}
 					$this->UserClassesDatabaseModel->updateUserClassPermissions($class, $privileges);
-
-					$color = (string)$_POST['color'];
-					if ($color !== $class->color) {
-						if (! preg_match('/^[a-fA-F0-9]{6}$/', $color)) {
-							$this->renderView('UserErrorView', ['color must be exactly 6 hexidecimal characters']);
-						} else {
-							$this->UserClassesDatabaseModel->setUserClassColor($class, $color);
-						}
-					}
 
 					echo "success";
 				}

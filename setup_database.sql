@@ -25,6 +25,7 @@ CREATE TABLE `threads` (
 	`timeposted` DATETIME NOT NULL,
 	`lastpostid` int(11) NOT NULL DEFAULT 0,
 	`locked` bool NOT NULL DEFAULT 0,
+	`stickied` bool NOT NULL DEFAULT 0,
 	UNIQUE KEY `id` (`id`)
 );
 

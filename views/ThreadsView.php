@@ -22,6 +22,7 @@ class ThreadsView extends View {
 	<a href="<?php echo htmlentities($mvcConfig['pathBase'] . 'thread/' . $thread->id); ?>"><?php echo htmlentities($thread->title); ?></a>
 	: created by <?php echo $this->renderView('FancyUsernameView', [$this->UsersDatabaseModel->getUserById($thread->creatorid)]); ?>
 	: <?php echo $thread->postcount; ?> posts
+	<?php echo $thread->stickied ? ' : stickied ' : ''; ?>
 	: <a href="<?php echo htmlentities($mvcConfig['pathBase'] . 'thread/' . $thread->id . '?index=' . $latestPage); ?>">latest post</a>
 		by <?php echo $this->renderView('FancyUsernameView', [$latestPoster]); ?>
 	<span class='post_time'>

@@ -16,17 +16,20 @@ class Thread {
 	private $timeposted;
 	private $lastpostid;
 	private $locked;
+	private $stickied;
 
 	public function __construct($data) {
 		$this->id = (int)$data['id'];
 		$this->forumid = (int)$data['forumid'];
 		$this->creatorid = (int)$data['creatorid'];
 		$this->title = (string)$data['title'];
+
 		$this->postcount = (int)$data['postcount'];
 		$this->timecreated = (string)$data['timecreated'];
 		$this->timeposted = (string)$data['timeposted'];
 		$this->lastpostid = (int)$data['lastpostid'];
 		$this->locked = (bool)$data['locked'];
+		$this->stickied = (bool)$data['stickied'];
 	}
 	public function __get($name) {
 		if ($name === 'id') {
@@ -47,6 +50,8 @@ class Thread {
 			return $this->lastpostid;
 		} elseif ($name === 'locked') {
 			return $this->locked;
+		} elseif ($name === 'stickied') {
+			return $this->stickied;
 		}
 	}
 }
@@ -128,7 +133,8 @@ class ThreadsDatabaseModel extends Model {
 		$id = (int)$id;
 		$index = (int)$index;
 		$count = (int)$count;
-		$result = $this->DatabaseModel->query("SELECT * FROM `threads` WHERE `forumid`=${id} ORDER BY `timeposted` DESC LIMIT ${index}, ${count}");
+		$result = $this->DatabaseModel->query("SELECT * FROM `threads` WHERE `forumid`=${id}
+				ORDER BY `stickied` DESC, `timeposted` DESC LIMIT ${index}, ${count}");
 		if (! is_object($result)) {
 			return [];
 		}
@@ -190,6 +196,19 @@ class ThreadsDatabaseModel extends Model {
 		$id = (int)$thread->id;
 		$status = (int)$status;
 		$result = $this->DatabaseModel->query("UPDATE `threads` SET `locked`=${status} WHERE `id`=${id}");
+		return $result;
+	}
+
+	/**
+	* changes the thread's sticky status (0/1)
+	*/
+	public function setThreadStickiedStatus($thread, $status) {
+		if ($thread === NULL) {
+			die('attempt to sticky a NULL thread');
+		}
+		$id = (int)$thread->id;
+		$status = (int)$status;
+		$result = $this->DatabaseModel->query("UPDATE `threads` SET `stickied`=${status} WHERE `id`=${id}");
 		return $result;
 	}
 

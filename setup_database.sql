@@ -72,6 +72,7 @@ CREATE TABLE `classes` (
 
 	`permission_create_thread` bool NOT NULL DEFAULT 0,
 	`permission_lock_thread` bool NOT NULL DEFAULT 0,
+	`permission_sticky_thread` bool NOT NULL DEFAULT 0,
 	`permission_delete_thread` bool NOT NULL DEFAULT 0,
 
 	`permission_create_post` bool NOT NULL DEFAULT 0,
@@ -94,6 +95,7 @@ INSERT INTO `classes` (`name`, `level`,
 	`permission_delete_forum`,
 	`permission_create_thread`,
 	`permission_lock_thread`,
+	`permission_sticky_thread`,
 	`permission_delete_thread`,
 	`permission_create_post`,
 	`permission_delete_post`,
@@ -101,19 +103,17 @@ INSERT INTO `classes` (`name`, `level`,
 	`permission_edit_lower_class`,
 	`permission_mute_user`,
 	`permission_ban_user`
-) VALUES ('admin', 1000000, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+) VALUES ('admin', 1000000, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 
 -- create the moderator class
 INSERT INTO `classes` (`name`, `level`,
-	`permission_create_forum`,
 	`permission_create_thread`,
 	`permission_lock_thread`,
-	`permission_delete_thread`,
+	`permission_sticky_thread`,
 	`permission_create_post`,
-	`permission_delete_post`,
 	`permission_edit_post`,
 	`permission_mute_user`
-) VALUES ('moderator', 1000, 1, 1, 1, 1, 1, 1, 1, 1);
+) VALUES ('moderator', 1000, 1, 1, 1, 1, 1, 1);
 
 -- create the basic user class
 INSERT INTO `classes` (`name`, `level`,

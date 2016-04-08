@@ -51,6 +51,28 @@ class ThreadsView extends View {
 <?php
 					}
 				}
+
+				if ($args['showStickyThread']) {
+					if ($thread->stickied) {
+?>
+	<form action='<?php echo htmlentities($mvcConfig['pathBase'] . 'forum/' . $args['forumid']); ?>' method='POST'>
+		<input type='hidden' name='action' value='unsticky_thread' />
+		<input type='hidden' name='threadid' value='<?php echo htmlentities($thread->id); ?>' />
+		<input type='hidden' name='csrf_token' value='<?php echo htmlentities($this->CSRFTokenModel->get()); ?>' />
+		<button>unsticky thread</button>
+	</form>
+<?php
+					} else {
+?>
+	<form action='<?php echo htmlentities($mvcConfig['pathBase'] . 'forum/' . $args['forumid']); ?>' method='POST'>
+		<input type='hidden' name='action' value='sticky_thread' />
+		<input type='hidden' name='threadid' value='<?php echo htmlentities($thread->id); ?>' />
+		<input type='hidden' name='csrf_token' value='<?php echo htmlentities($this->CSRFTokenModel->get()); ?>' />
+		<button>sticky thread</button>
+	</form>
+<?php
+					}
+				}
 ?>
 </div>
 <?php

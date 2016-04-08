@@ -108,6 +108,27 @@ class ListController extends Controller {
 				$this->renderView('UserErrorView', ['invalid action']);
 			}
 
+		} elseif (($_POST['action'] === 'unsticky_thread' or $_POST['action'] === 'sticky_thread') and isset($args['id']) and isset($_POST['threadid'])) {
+			// verify user credentials
+			$forum = $this->ForumsDatabaseModel->getForumById($args['id']);
+			$user = $this->LoginModel->getCurrentUser();
+			if ($forum !== NULL and $user !== NULL and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('sticky_thread')) {
+				// verify target
+				$thread = $this->ThreadsDatabaseModel->getThreadById($_POST['threadid']);
+				if ($thread === NULL) {
+					$this->renderView('UserErrorView', ['invalid action']);
+				} else {
+					$result = $this->ThreadsDatabaseModel->setThreadStickiedStatus($thread, $_POST['action'] === 'sticky_thread');
+					if (! $result) {
+						$this->renderView('UserErrorView', ['error setting stickying status']);
+					} else {
+						$this->redirect($mvcConfig['pathBase'] . 'forum/' . $forum->id);
+					}
+				}
+			} else {
+				$this->renderView('UserErrorView', ['invalid action']);
+			}
+
 		} elseif ($_POST['action'] === 'create_post' and isset($_POST['post']) and isset($args['id'])) {
 			// verify user credentials
 			$thread = $this->ThreadsDatabaseModel->getThreadById($args['id']);
@@ -176,10 +197,11 @@ class ListController extends Controller {
 
 				// if the user is privileged, show him the create_thread form
 				$user = $this->LoginModel->getCurrentUser();
-				$viewargs['showCreateThread'] = ($user !== NULL and (! $user->muted)
-					and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('create_thread'));
+				$userclass = $this->UserClassesDatabaseModel->getUserClassByUser($user);
+				$viewargs['showCreateThread'] = ($user !== NULL and (! $user->muted) and $userclass->can('create_thread'));
 				$viewargs['showMuted'] = ($user !== NULL and $user->muted);
-				$viewargs['showLockThread'] = ($user !== NULL and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('lock_thread'));
+				$viewargs['showLockThread'] = ($user !== NULL and $userclass->can('lock_thread'));
+				$viewargs['showStickyThread'] = ($user !== NULL and $userclass->can('sticky_thread'));
 
 				$this->renderView('ThreadsView', $viewargs);
 			}

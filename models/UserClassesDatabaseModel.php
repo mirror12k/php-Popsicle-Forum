@@ -24,6 +24,7 @@ class UserClass {
 
 		$this->permissions['create_thread'] = (bool)$data['permission_create_thread'];
 		$this->permissions['lock_thread'] = (bool)$data['permission_lock_thread'];
+		$this->permissions['sticky_thread'] = (bool)$data['permission_sticky_thread'];
 		$this->permissions['delete_thread'] = (bool)$data['permission_delete_thread'];
 
 		$this->permissions['create_post'] = (bool)$data['permission_create_post'];

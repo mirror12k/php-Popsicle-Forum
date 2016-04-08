@@ -43,6 +43,10 @@ body {
 	background-color: #FFF;
 }
 
+.users_list {
+	text-align: center;
+}
+
 .post_time {
 	color: #CCC;
 }

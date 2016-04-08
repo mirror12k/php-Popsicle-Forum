@@ -169,6 +169,42 @@ class UsersDatabaseModel extends Model {
 	}
 
 	/**
+	* returns an integer of how many user entries there are, or NULL if failed
+	*/
+	public function getUserCount() {
+		$result = $this->DatabaseModel->query("SELECT COUNT(`id`) FROM `users`");
+		if (! is_object($result)) {
+			return NULL;
+		}
+		if ($result->num_rows === 0) {
+			$count = NULL;
+		} else {
+			$row = $result->fetch_row();
+			$count = $row[0];
+		}
+		$result->free();
+		return $count;
+	}
+
+	/**
+	* returns an array of user entries (maximum of $count) as User objects (starting at index $index)
+	*/
+	public function listUsers($index=0, $count=50) {
+		$index = (int)$index;
+		$count = (int)$count;
+		$result = $this->DatabaseModel->query("SELECT `id`,`classid`, `username`, `banned`,  `muted` FROM `users` ORDER BY `id` ASC LIMIT ${index}, ${count}");
+		if (! is_object($result)) {
+			return [];
+		}
+		$users = [];
+		while ($row = $result->fetch_assoc()) {
+			array_push($users, $this->renderUser($row));
+		}
+		$result->free();
+		return $users;
+	}
+
+	/**
 	* creates a new user entry with the given username/password and classid
 	* returns a user object for the new user if successful, otherwise null
 	*/

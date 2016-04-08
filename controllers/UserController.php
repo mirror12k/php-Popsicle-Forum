@@ -4,7 +4,7 @@
 
 class UserController extends Controller {
 	public static $required = ['UserClassesDatabaseModel', 'UsersDatabaseModel', 'LoginModel', 'CSRFTokenModel'];
-	public static $inherited = ['UserErrorView', 'UserView'];
+	public static $inherited = ['UserErrorView', 'UserView', 'UsersView'];
 	public function invoke($args) {
 		if (isset($args['page']) and isset($_POST['action']) and isset($_POST['csrf_token'])) {
 			// verify csrf token
@@ -92,9 +92,34 @@ class UserController extends Controller {
 					$viewargs['showBanUser'] = FALSE;
 				}
 
-
 				$this->renderView('UserView', $viewargs);
 			}
+		} elseif ($args['page'] === 'users') {
+			if (isset($_GET['index'])) {
+				$index = (int)$_GET['index'];
+				if ($index < 0) {
+					$index = 0;
+				}
+			} else {
+				$index = 0;
+			}
+			$count = 50;
+
+			$usercount = $this->UsersDatabaseModel->getUserCount();
+			if ($usercount === NULL) {
+				die("failed to get user count");
+			}
+
+			$users = $this->UsersDatabaseModel->listUsers($index * $count, $count);
+			$viewargs = ['users' => $users, 'thisPage' => $index];
+			if ($index > 0) {
+				$viewargs['prevPage'] = $index - 1;
+			}
+			if ($index + 1 < $usercount / $count) {
+				$viewargs['nextPage'] = $index + 1;
+			}
+
+			$this->renderView('UsersView', $viewargs);
 		} else {
 			$this->renderView('UserErrorView', ['invalid page']);
 		}

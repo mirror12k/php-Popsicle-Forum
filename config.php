@@ -22,3 +22,15 @@ $databaseConfig = [
 	'database' => 'popsicle',
 ];
 
+// popsicle forum configuration
+global $popsicleConfig;
+$popsicleConfig = [
+	// the user class assigned by default to freshly registered users
+	'defaultUserClass' => 1,
+	// the maximum number of threads to be displayed on a forum page
+	'threadsPerPage' => 1,
+	// the maximum number of posts to be displayed on a thread page
+	'postsPerPage' => 1,
+];
+
+

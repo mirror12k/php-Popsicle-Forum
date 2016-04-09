@@ -208,7 +208,12 @@ class UsersDatabaseModel extends Model {
 	* creates a new user entry with the given username/password and classid
 	* returns a user object for the new user if successful, otherwise null
 	*/
-	public function createUser($username, $password, $classid=3) {
+	public function createUser($username, $password, $classid=NULL) {
+		if ($classid === NULL) {
+			// use the default userclass if non is given
+			global $popsicleConfig;
+			$classid = $popsicleConfig['defaultUserClass'];
+		}
 		$username = $this->DatabaseModel->mysql_escape_string($username);
 		$salt = $this->generateSalt();
 		$password = $this->hashPassword($salt, (string)$password);

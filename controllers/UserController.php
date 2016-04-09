@@ -73,6 +73,7 @@ class UserController extends Controller {
 	}
 
 	public function invokePage($args) {
+		global $popsicleConfig;
 		if ($args['page'] === 'user' and isset($args['id'])) {
 			$target = $this->UsersDatabaseModel->getUserById($args['id']);
 			if ($target === NULL) {
@@ -103,7 +104,7 @@ class UserController extends Controller {
 			} else {
 				$index = 0;
 			}
-			$count = 50;
+			$count = $popsicleConfig['usersPerPage'];
 
 			$usercount = $this->UsersDatabaseModel->getUserCount();
 			if ($usercount === NULL) {

@@ -158,6 +158,7 @@ class ListController extends Controller {
 	}
 
 	public function invokePage($args) {
+		global $popsicleConfig;
 		if ($args['page'] === 'forums') {
 			// get the forums to display
 			$forums = $this->ForumsDatabaseModel->listForums();
@@ -184,7 +185,7 @@ class ListController extends Controller {
 				} else {
 					$index = 0;
 				}
-				$count = 15;
+				$count = $popsicleConfig['threadsPerPage'];
 
 				$threads = $this->ThreadsDatabaseModel->listThreadsByForumId($forum->id, $index * $count, $count);
 				$viewargs = ['threads' => $threads, 'forumid' => $forum->id, 'thisPage' => $index];
@@ -197,7 +198,9 @@ class ListController extends Controller {
 
 				// if the user is privileged, show him the create_thread form
 				$user = $this->LoginModel->getCurrentUser();
-				$userclass = $this->UserClassesDatabaseModel->getUserClassByUser($user);
+				if ($user !== NULL) {
+					$userclass = $this->UserClassesDatabaseModel->getUserClassByUser($user);
+				}
 				$viewargs['showCreateThread'] = ($user !== NULL and (! $user->muted) and $userclass->can('create_thread'));
 				$viewargs['showMuted'] = ($user !== NULL and $user->muted);
 				$viewargs['showLockThread'] = ($user !== NULL and $userclass->can('lock_thread'));
@@ -220,7 +223,7 @@ class ListController extends Controller {
 				} else {
 					$index = 0;
 				}
-				$count = 10;
+				$count = $popsicleConfig['postsPerPage'];
 
 				$posts = $this->ThreadsDatabaseModel->listPostsByThreadId($thread->id, $index * $count, $count);
 				$viewargs = ['posts' => $posts, 'threadid' => $thread->id, 'thisPage' => $index];

@@ -250,6 +250,41 @@ class ListController extends Controller {
 
 				$this->renderView('PostsView', $viewargs);
 			}
+
+		} elseif ($args['page'] === 'latest') {
+			if (isset($_GET['index'])) {
+				$index = (int)$_GET['index'];
+				if ($index < 0) {
+					$index = 0;
+				}
+			} else {
+				$index = 0;
+			}
+			$count = $popsicleConfig['postsPerPage'];
+
+			$postcount = $this->ThreadsDatabaseModel->countPosts();
+
+			$posts = $this->ThreadsDatabaseModel->listLatestPosts($index * $count, $count);
+			$viewargs = ['posts' => $posts, 'thisPage' => $index];
+			if ($index > 0) {
+				$viewargs['prevPage'] = $index - 1;
+			}
+			if ($index + 1 < $postcount / $count) {
+				$viewargs['nextPage'] = $index + 1;
+			}
+
+			$viewargs['currentIndexStart'] = $index * $count;
+			if ($postcount > ($index + 1) * $count) {
+				$viewargs['currentIndexEnd'] = ($index + 1) * $count - 1;
+			} else {
+				$viewargs['currentIndexEnd'] = $postcount - 1;
+			}
+			$viewargs['lastIndex'] = $postcount;
+
+			$viewargs['linkThread'] = TRUE;
+
+			$this->renderView('PostsView', $viewargs);
+
 		} else {
 			$this->renderView('UserErrorView', ['invalid page']);
 		}

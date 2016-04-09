@@ -287,6 +287,41 @@ class ThreadsDatabaseModel extends Model {
 	}
 
 	/**
+	* returns an array of the latest posts
+	*/
+	public function listLatestPosts($index=0, $count=10) {
+		$index = (int)$index;
+		$count = (int)$count;
+		$result = $this->DatabaseModel->query("SELECT * FROM `posts` ORDER BY `id` DESC LIMIT ${index}, ${count}");
+		if (! is_object($result)) {
+			return [];
+		}
+		$posts = [];
+		while ($row = $result->fetch_assoc()) {
+			array_push($posts, $this->renderPost($row));
+		}
+		$result->free();
+		return $posts;
+	}
+
+	/**
+	* returns the number of posts total
+	*/
+	public function countPosts() {
+		$result = $this->DatabaseModel->query("SELECT COUNT(`id`) FROM `posts`");
+		if (! is_object($result)) {
+			return NULL;
+		}
+		if ($result->num_rows === 0) {
+			die("invalid result");
+		} else {
+			$count = $result->fetch_row()[0];
+		}
+		$result->free();
+		return $count;
+	}
+
+	/**
 	* creates a new Post with the given data
 	*/
 	public function createPost($thread, $creatorid, $text) {

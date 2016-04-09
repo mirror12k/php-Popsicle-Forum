@@ -240,6 +240,7 @@ class ListController extends Controller {
 				} else {
 					$viewargs['currentIndexEnd'] = $thread->postcount - 1;
 				}
+				$viewargs['lastIndex'] = $thread->postcount;
 
 				// if the user is privileged, show him the create_post form
 				$user = $this->LoginModel->getCurrentUser();

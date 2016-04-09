@@ -231,7 +231,7 @@ class ThreadsDatabaseModel extends Model {
 	}
 
 	/**
-	* returns an array of all threads entries in a given forum as Thread objects
+	* returns an array of post entries in a given thread as Post objects
 	*/
 	public function listPostsByThreadId($id, $index=0, $count=10) {
 		$id = (int)$id;
@@ -247,6 +247,43 @@ class ThreadsDatabaseModel extends Model {
 		}
 		$result->free();
 		return $posts;
+	}
+
+	/**
+	* returns an array of post entries by a given user as Post objects
+	*/
+	public function listPostsByCreatorId($id, $index=0, $count=10) {
+		$id = (int)$id;
+		$index = (int)$index;
+		$count = (int)$count;
+		$result = $this->DatabaseModel->query("SELECT * FROM `posts` WHERE `creatorid`=${id} ORDER BY `id` DESC LIMIT ${index}, ${count}");
+		if (! is_object($result)) {
+			return [];
+		}
+		$posts = [];
+		while ($row = $result->fetch_assoc()) {
+			array_push($posts, $this->renderPost($row));
+		}
+		$result->free();
+		return $posts;
+	}
+
+	/**
+	* returns the number of posts submitted by a single user
+	*/
+	public function countPostsByCreatorId($id) {
+		$id = (int)$id;
+		$result = $this->DatabaseModel->query("SELECT COUNT(`creatorid`) FROM `posts` WHERE `creatorid`=${id}");
+		if (! is_object($result)) {
+			return NULL;
+		}
+		if ($result->num_rows === 0) {
+			die("invalid result");
+		} else {
+			$count = $result->fetch_row()[0];
+		}
+		$result->free();
+		return $count;
 	}
 
 	/**

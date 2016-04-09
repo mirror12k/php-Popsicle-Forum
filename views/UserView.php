@@ -15,6 +15,7 @@ class UserView extends View {
 <div class='user_desc'>
 	User: <b><?php echo htmlentities($user->username); ?></b><br />
 	Class: <?php echo htmlentities($class->name); ?><br />
+	<a href='<?php echo htmlentities($mvcConfig['pathBase'] . 'userposts/' . $user->id); ?>'>view user's posts</a>
 	<?php echo $user->banned ? '<div class="error_message">User is banned</div>' : ''; ?><br />
 	<?php echo $user->muted ? '<div class="error_message">User is muted</div>' : ''; ?><br />
 

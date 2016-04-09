@@ -3,7 +3,7 @@
 
 
 class UserController extends Controller {
-	public static $required = ['UserClassesDatabaseModel', 'UsersDatabaseModel', 'LoginModel', 'CSRFTokenModel'];
+	public static $required = ['UserClassesDatabaseModel', 'UsersDatabaseModel', 'LoginModel', 'CSRFTokenModel', 'ThreadsDatabaseModel'];
 	public static $inherited = ['UserErrorView', 'UserView', 'UsersView'];
 	public function invoke($args) {
 		if (isset($args['page']) and isset($_POST['action']) and isset($_POST['csrf_token'])) {
@@ -94,6 +94,47 @@ class UserController extends Controller {
 				}
 
 				$this->renderView('UserView', $viewargs);
+			}
+		} elseif ($args['page'] === 'userposts' and isset($args['id'])) {
+			$user = $this->UsersDatabaseModel->getUserById($args['id']);
+			if ($user === NULL) {
+				$this->renderView('UserErrorView', ['invalid page']);
+			} else {
+				if (isset($_GET['index'])) {
+					$index = (int)$_GET['index'];
+					if ($index < 0) {
+						$index = 0;
+					}
+				} else {
+					$index = 0;
+				}
+				$count = $popsicleConfig['postsPerPage'];
+
+				$postCount = $this->ThreadsDatabaseModel->countPostsByCreatorId($user->id);
+				if ($postCount === NULL) {
+					die("failed to get posts count");
+				}
+
+				$posts = $this->ThreadsDatabaseModel->listPostsByCreatorId($user->id, $index * $count, $count);
+				$viewargs = ['posts' => $posts, 'thisPage' => $index];
+				if ($index > 0) {
+					$viewargs['prevPage'] = $index - 1;
+				}
+				if ($index + 1 < $postCount / $count) {
+					$viewargs['nextPage'] = $index + 1;
+				}
+
+				$viewargs['currentIndexStart'] = $index * $count;
+				if ($postCount > ($index + 1) * $count) {
+					$viewargs['currentIndexEnd'] = ($index + 1) * $count - 1;
+				} else {
+					$viewargs['currentIndexEnd'] = $postCount - 1;
+				}
+				$viewargs['lastIndex'] = $postCount;
+
+				$viewargs['linkThread'] = TRUE;
+
+				$this->renderView('PostsView', $viewargs);
 			}
 		} elseif ($args['page'] === 'users') {
 			if (isset($_GET['index'])) {

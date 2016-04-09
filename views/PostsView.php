@@ -7,18 +7,27 @@ class PostsView extends View {
 	public static $inherited = ['PopsicleHeaderView', 'PopsicleFooterView', 'FancyUsernameView'];
 	
 	public function render($args) {
+		global $mvcConfig;
 		$this->renderView('PopsicleHeaderView', [ 'title' => 'Popsicle - Posts' ]);
 
 ?>
 <div class='posts_list'>
-<p>viewing posts #<?php echo htmlentities($args['currentIndexStart']); ?> to #<?php echo htmlentities($args['currentIndexEnd']); ?></p>
+<p>
+	viewing posts #<?php echo htmlentities($args['currentIndexStart']); ?>
+	to #<?php echo htmlentities($args['currentIndexEnd']); ?>
+	of <?php echo htmlentities($args['lastIndex']); ?> posts
+</p>
 <?php
 
-		global $mvcConfig;
 		foreach ($args['posts'] as $post) {
 ?>
 <div class='post'>
 	<?php $this->renderView('FancyUsernameView', [$this->UsersDatabaseModel->getUserById($post->creatorid)]) ?>
+	<?php
+		if (isset($args['linkThread']) and $args['linkThread']) {
+			echo  " : <a href='" . htmlentities($mvcConfig['pathBase'] . 'thread/' . $post->threadid) . "'>source</a>";
+		}
+	?>
 	<div class='post_time'><?php echo htmlentities($post->timeposted) ?></div>
 	<div class='post_text'><p><?php echo htmlentities($post->text); ?></p></div>
 </div>
@@ -35,7 +44,7 @@ class PostsView extends View {
 			?><b><a href="<?php echo '?index=' . htmlentities($args['nextPage']); ?>">&gt;</a></b><?php
 		}
 
-		if ($args['showCreatePost']) {
+		if (isset($args['showCreatePost']) and $args['showCreatePost']) {
 ?>
 <p>Reply:</p>
 <form action='<?php echo htmlentities($mvcConfig['pathBase'] . 'thread/' . $args['threadid']); ?>' method='POST'>
@@ -46,7 +55,7 @@ class PostsView extends View {
 </form>
 <?php
 
-		} elseif ($args['showMuted']) {
+		} elseif (isset($args['showMuted']) and $args['showMuted']) {
 ?>
 <div class='message'>User is Muted!</div>
 <?php

@@ -16,3 +16,5 @@ $router->route('/^(?<page>user)\/(?<id>\d+)$/', 'UserController');
 $router->route('/^(?<page>users)$/', 'UserController');
 $router->route('/^admin\/(?<page>classes)$/', 'AdminstrationController');
 
+$router->route('/^(?<page>setup)$/', 'SetupController');
+

@@ -3,10 +3,16 @@
 
 
 class SetupController extends Controller {
-	public static $required = ['UserClassesDatabaseModel', 'UsersDatabaseModel'];
+	public static $required = ['UserClassesDatabaseModel', 'UsersDatabaseModel', 'DatabaseModel'];
 	public static $inherited = ['UserErrorView'];
+
 	public function invoke($args) {
-		if (count($this->UserClassesDatabaseModel->listUserClasses()) === 0) {
+		if ($this->DatabaseModel->isSetup() === FALSE) {
+			echo "starting popsicle setup\n";
+
+			$this->execute_setup_database();
+			echo "executed database setup\n";
+
 			$userClass = $this->UserClassesDatabaseModel->createClass('user', 10);
 			if ($userClass === NULL) {
 				die ('failed to create user class');
@@ -62,6 +68,39 @@ class SetupController extends Controller {
 
 		} else {
 			$this->renderView('UserErrorView', ['invalid page']);
+		}
+	}
+
+
+
+	public function execute_setup_database() {
+		// credits to an answer on https://stackoverflow.com/questions/4027769/running-mysql-sql-files-in-php
+		// with modifications
+		// load file
+		global $popsicleConfig;
+		$text = file_get_contents($popsicleConfig['setupDatabaseFile']);
+
+		// delete comments
+		$lines = explode("\n",$text);
+		$filteredText = '';
+		foreach ($lines as $line){ // ensure success
+			$line = trim($line);
+			if ($line and (! preg_match('/^--.*$/', $line))){ // skip comments and empty lines
+				$filteredText .= $line . "\n";
+			}
+		}
+
+		// convert to array
+		$commands = explode(";", $filteredText);
+
+		// run commands
+		foreach ($commands as $command){
+			if (trim($command)) { // skip empty lines
+				$result = $this->DatabaseModel->query($command);
+				if ($result !== TRUE) { // ensure success
+					die ("query failed: '${command}'");
+				}
+			}
 		}
 	}
 }

@@ -40,6 +40,7 @@ class DatabaseModel extends Model {
 		}
 		return $result;
 	}
+
 	public function mysql_escape_string($string) {
 		if ($this->isConnected !== TRUE) {
 			$this->connect();
@@ -54,4 +55,15 @@ class DatabaseModel extends Model {
 			return $this->database->affected_rows;
 		}
 	}
+
+	public function isSetup() {
+		$result = $this->query('SHOW TABLES');
+		if (! is_object($result)) {
+			return NULL;
+		}
+		$tablesExist = $result->num_rows !== 0;
+		$result->free();
+		return $tablesExist;
+	}
+
 }

@@ -28,9 +28,13 @@ $popsicleConfig = [
 	// the user class assigned by default to freshly registered users
 	'defaultUserClass' => 1,
 	// the maximum number of threads to be displayed on a forum page
-	'threadsPerPage' => 1,
+	'threadsPerPage' => 15,
 	// the maximum number of posts to be displayed on a thread page
-	'postsPerPage' => 1,
+	'postsPerPage' => 10,
+	// the maximum number of users to be displayed on a user list page
+	'usersPerPage' => 50,
+	// the sql file to run when running intial setup
+	'setupDatabaseFile' => 'setup_database.sql',
 ];
 
 

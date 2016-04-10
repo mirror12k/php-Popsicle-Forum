@@ -305,6 +305,29 @@ class ThreadsDatabaseModel extends Model {
 	}
 
 	/**
+	* returns an array of the posts 
+	*/
+	public function searchPosts($terms, $count=10) {
+		$terms = array_map(function ($s) {
+			return '+' . $s;
+		}, $terms);
+		$search = implode(' ', $terms);
+		$search = $this->DatabaseModel->mysql_escape_string($search);
+
+		$count = (int)$count;
+		$result = $this->DatabaseModel->query("SELECT * FROM `posts` WHERE MATCH (`text`) AGAINST ('${search}' IN BOOLEAN MODE) LIMIT ${count}");
+		if (! is_object($result)) {
+			return [];
+		}
+		$posts = [];
+		while ($row = $result->fetch_assoc()) {
+			array_push($posts, $this->renderPost($row));
+		}
+		$result->free();
+		return $posts;
+	}
+
+	/**
 	* returns the number of posts total
 	*/
 	public function countPosts() {

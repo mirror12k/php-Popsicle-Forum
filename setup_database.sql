@@ -38,8 +38,9 @@ CREATE TABLE `posts` (
 	`threadid` int(11) NOT NULL,
 	`text` text NOT NULL,
 	`timeposted` DATETIME NOT NULL,
-	UNIQUE KEY `id` (`id`)
-);
+	UNIQUE KEY `id` (`id`),
+	FULLTEXT idx (`text`)
+) ENGINE=MYISAM;
 
 
 

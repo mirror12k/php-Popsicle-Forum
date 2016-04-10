@@ -7,6 +7,13 @@ body {
 .header, .footer {
 	background-color: #ECE;
 	text-align: center;
+	padding: 0.8%;
+}
+
+.login_form, .register_form, .search_form {
+	background-color: #FDD;
+	text-align: center;
+	padding: 5px;
 }
 
 .post {

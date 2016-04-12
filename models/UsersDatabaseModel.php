@@ -226,6 +226,17 @@ class UsersDatabaseModel extends Model {
 		}
 	}
 
+	public function setUserClassId($user, $classid) {
+		if ($user === NULL) {
+			die('attempt to change classid to NULL user');
+		}
+		$id = (int)$user->id;
+		$classid = (int)$classid;
+
+		$result = $this->DatabaseModel->query("UPDATE `users` SET `classid`=${classid} WHERE `id`=${id}");
+		return $result;
+	}
+
 	public function setUserPassword($user, $password) {
 		if ($user === NULL) {
 			die('attempt to change password to NULL user');

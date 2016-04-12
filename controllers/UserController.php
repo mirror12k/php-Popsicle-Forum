@@ -67,6 +67,31 @@ class UserController extends Controller {
 				}
 			}
 
+		} elseif ($args['page'] === 'user' and $_POST['action'] === 'change_class' and isset($_POST['class']) and isset($args['id'])) {
+			$target = $this->UsersDatabaseModel->getUserById($args['id']);
+			$user = $this->LoginModel->getCurrentUser();
+			if ($user === NULL or $target === NULL) {
+				$this->renderView('UserErrorView', ['invalid action']);
+			} else {
+				$targetClass = $this->UserClassesDatabaseModel->getUserClassByUser($target);
+				$userClass = $this->UserClassesDatabaseModel->getUserClassByUser($user);
+				$newClass = $this->UserClassesDatabaseModel->getUserClassById((int)$_POST['class']);
+				if (! $userClass->can('edit_lower_class')) {
+					$this->renderView('UserErrorView', ['invalid action']);
+				} elseif ($targetClass->level >= $userClass->level) {
+					$this->renderView('UserErrorView', ['invalid action']);
+				} elseif ($newClass === NULL or $newClass->level >= $userClass->level) {
+					$this->renderView('UserErrorView', ['invalid action']);
+				} else {
+					$result = $this->UsersDatabaseModel->setUserClassId($target, $newClass->id);
+					if (! $result) {
+						$this->renderView('UserErrorView', ['error changing user class']);
+					} else {
+						$this->redirect($mvcConfig['pathBase'] . 'user/' . $target->id);
+					}
+				}
+			}
+
 		} else {
 			$this->renderView('UserErrorView', ['invalid page']);
 		}
@@ -89,7 +114,7 @@ class UserController extends Controller {
 					// decide which options to show
 					$viewargs['showMuteUser'] = ($userClass->can('mute_user') and $targetClass->level < $userClass->level);
 					$viewargs['showBanUser'] = ($userClass->can('ban_user') and $targetClass->level < $userClass->level);
-					$viewargs['showChangeClass'] = ($userClass->can('edit_lower_class'));
+					$viewargs['showChangeClass'] = ($userClass->can('edit_lower_class') and $targetClass->level < $userClass->level);
 					if ($viewargs['showChangeClass']) {
 						// add classes that we can set to this user
 						$viewargs['classesAvailable'] = [];

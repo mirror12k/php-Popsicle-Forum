@@ -6,7 +6,8 @@ class EditPasswordView extends View {
 	public static $inherited = ['PopsicleHeaderView', 'PopsicleFooterView'];
 	public function render ($args) {
 		$this->renderView('PopsicleHeaderView', [ 'title' => 'Popsicle - Change password' ]);
-		
+		global $mvcConfig;
+
 ?>
 <div class='register_form'>
 	<?php if (isset($args['message'])) { echo "<p class='message'>" . htmlentities($args['message']) . "</p>"; } ?>

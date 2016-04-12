@@ -46,6 +46,11 @@ class ClassesView extends View {
 <?php
 		}
 ?>
+<form action='<?php echo htmlentities($mvcConfig['pathBase'] . 'admin/classes'); ?>' method='POST'>
+	<input type='hidden' name='action' value='new_class' />
+	<input type='hidden' name='csrf_token' value='<?php echo htmlentities($this->CSRFTokenModel->get()); ?>' />
+	<button>Create New Class</button>
+</form>
 </div>
 <?php
 

@@ -10,7 +10,7 @@
 // model-view-controller configuration
 global $mvcConfig;
 $mvcConfig = [
-	'pathBase' => '/popsicle/', // the root of this mvc instance
+	'pathBase' => '/', // the root of this mvc instance, if it hosted in a subdirectory such as /forum, then pathBase must be set to '/forum/'
 ];
 
 // database configuration

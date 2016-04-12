@@ -7,7 +7,7 @@ class LoginController extends Controller {
 	public static $inherited = ['LoginView', 'RegisterView', 'UserErrorView', 'EditPasswordView'];
 
 	public function invoke($args) {
-		$user = $this->LoginModel->getCurrentUser($username, $password);
+		$user = $this->LoginModel->getCurrentUser();
 		if ($args['page'] === 'login') {
 			if ($user !== NULL) {
 				$this->renderView('UserErrorView', ['cant login while logged in']);

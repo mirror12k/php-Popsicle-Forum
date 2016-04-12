@@ -12,6 +12,8 @@ class ClassesView extends View {
 
 ?>
 <div class='classes_list'>
+	<?php if (isset($args['message'])) { echo "<p class='message'>" . htmlentities($args['message']) . "</p>"; } ?>
+	<?php if (isset($args['error'])) { echo "<p class='error_message'>" . htmlentities($args['error']) . "</p>"; } ?>
 <?php
 
 		foreach ($args['classes'] as $class) {

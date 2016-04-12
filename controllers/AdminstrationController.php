@@ -30,12 +30,14 @@ class AdminstrationController extends Controller {
 				if ($user === NULL or (! $userclass->can('edit_lower_class')) or $class === NULL) {
 					$this->renderView('UserErrorView', ['invalid action']);
 				} elseif ($class->level >= $userclass->level) {
-					$this->renderView('UserErrorView', ['cannot edit classes of higher or equal user class level']);
+					$this->renderView('ClassesView', ['classes' => $this->UserClassesDatabaseModel->listUserClasses(),
+						'error' => 'cannot edit classes of higher or equal user class level']);
 				} else {
 					$name = (string)$_POST['name'];
 					if ($name !== $class->name) {
 						if (! preg_match('/^[a-zA-Z0-9][a-zA-Z0-9 ]{0,63}$/', $name)) {
-							$this->renderView('UserErrorView', ['name must be exactly be alphanumeric, max 64 characters']);
+							$this->renderView('ClassesView', ['classes' => $this->UserClassesDatabaseModel->listUserClasses(),
+								'error' => 'name must be exactly be alphanumeric, max 64 characters']);
 							return;
 						} else {
 							$this->UserClassesDatabaseModel->setUserClassName($class, $name);
@@ -45,10 +47,12 @@ class AdminstrationController extends Controller {
 					$level = (int)$_POST['level'];
 					if ($level !== $class->level) {
 						if ($level < 0) {
-							$this->renderView('UserErrorView', ['level must be at least 0']);
+							$this->renderView('ClassesView', ['classes' => $this->UserClassesDatabaseModel->listUserClasses(),
+								'error' => 'level must be at least 0']);
 							return;
 						} elseif ($level >= $userclass->level) {
-							$this->renderView('UserErrorView', ['level must be below your own level']);
+							$this->renderView('ClassesView', ['classes' => $this->UserClassesDatabaseModel->listUserClasses(),
+								'error' => 'level must be below your own level']);
 							return;
 						} else {
 							$this->UserClassesDatabaseModel->setUserClassLevel($class, $level);
@@ -58,7 +62,8 @@ class AdminstrationController extends Controller {
 					$color = (string)$_POST['color'];
 					if ($color !== $class->color) {
 						if (! preg_match('/^[a-fA-F0-9]{6}$/', $color)) {
-							$this->renderView('UserErrorView', ['color must be exactly 6 hexidecimal characters']);
+							$this->renderView('ClassesView', ['classes' => $this->UserClassesDatabaseModel->listUserClasses(),
+								'error' => 'color must be exactly 6 hexidecimal characters']);
 							return;
 						} else {
 							$this->UserClassesDatabaseModel->setUserClassColor($class, $color);
@@ -69,14 +74,16 @@ class AdminstrationController extends Controller {
 					foreach (array_keys($privileges) as $key) {
 						if (isset($_POST[$key]) and $_POST[$key] === 'on') {
 							if ((! $userclass->can($key)) and (! $class->can($key))) {
-								$this->renderView('UserErrorView', ['cant give a class permission that you dont have:' . $key]);
+								$this->renderView('ClassesView', ['classes' => $this->UserClassesDatabaseModel->listUserClasses(),
+									'error' => 'cant give a class permission that you dont have:' . $key]);
 								return;
 							} else {
 								$privileges[$key] = 1;
 							}
 						} else {
 							if ((! $userclass->can($key)) and $class->can($key)) {
-								$this->renderView('UserErrorView', ['cant take away a class permission that you dont have:' . $key]);
+								$this->renderView('ClassesView', ['classes' => $this->UserClassesDatabaseModel->listUserClasses(),
+									'error' => 'cant take away a class permission that you dont have:' . $key]);
 								return;
 							} else {
 								$privileges[$key] = 0;
@@ -85,7 +92,8 @@ class AdminstrationController extends Controller {
 					}
 					$this->UserClassesDatabaseModel->updateUserClassPermissions($class, $privileges);
 
-					echo "success";
+					$this->renderView('ClassesView', ['classes' => $this->UserClassesDatabaseModel->listUserClasses(),
+						'message' => 'successfully changed class!']);
 				}
 			} else {
 				$this->renderView('UserErrorView', ['invalid page']);

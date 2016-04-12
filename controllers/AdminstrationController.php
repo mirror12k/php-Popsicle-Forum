@@ -94,13 +94,21 @@ class AdminstrationController extends Controller {
 	}
 
 	public function invokePage($args) {
-		if ($args['page'] === 'classes') {
+		if ($args['page'] === 'admin') {
+			$user = $this->LoginModel->getCurrentUser();
+			if ($user !== NULL and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('edit_lower_class')) {
+				$classes = $this->UserClassesDatabaseModel->listUserClasses();
+				$this->renderView('AdminPanelView');
+			} else {
+				$this->renderView('UserErrorView', ['must be an admin to view the admin panel']);
+			}
+		} elseif ($args['page'] === 'classes') {
 			$user = $this->LoginModel->getCurrentUser();
 			if ($user !== NULL and $this->UserClassesDatabaseModel->getUserClassByUser($user)->can('edit_lower_class')) {
 				$classes = $this->UserClassesDatabaseModel->listUserClasses();
 				$this->renderView('ClassesView', ['classes' => $classes]);
 			} else {
-				$this->renderView('UserErrorView', ['invalid action']);
+				$this->renderView('UserErrorView', ['invalid page']);
 			}
 		} else {
 			$this->renderView('UserErrorView', ['invalid page']);

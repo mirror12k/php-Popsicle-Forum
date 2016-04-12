@@ -3,6 +3,7 @@
 
 class PopsicleHeaderView extends View {
 	public static $required = ['LoginModel'];
+	public static $inherited = ['FancyUsernameView'];
 	public function render ($args) {
 		global $mvcConfig; // need the base path
 		$user = $this->LoginModel->getCurrentUser();
@@ -20,8 +21,9 @@ class PopsicleHeaderView extends View {
 	<a href='<?php echo htmlentities($mvcConfig['pathBase'] . 'forums'); ?>'>forums</a> | 
 	<a href='<?php echo htmlentities($mvcConfig['pathBase'] . 'users'); ?>'>users</a> | 
 <?php if ($user !== NULL) { ?>
+	<a href='<?php echo htmlentities($mvcConfig['pathBase']); ?>edit_password'>edit password</a> | 
 	<a href='<?php echo htmlentities($mvcConfig['pathBase']); ?>logout'>logout</a> | 
-	<span>welcome <?php echo htmlentities($user->username); ?>!</span>
+	<span>Logged in as <?php $this->renderView('FancyUsernameView', [$user]); ?></span>
 <?php } else { ?>
 	<a href='<?php echo htmlentities($mvcConfig['pathBase']); ?>search'>search posts</a> | 
 	<a href='<?php echo htmlentities($mvcConfig['pathBase']); ?>login'>login</a> | 

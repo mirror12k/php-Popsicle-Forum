@@ -70,3 +70,12 @@ body {
 .error_message {
 	color: #F44;
 }
+
+
+.user_error {
+	text-align: center;
+	margin: 5%;
+	padding-top: 5%;
+	padding-bottom: 5%;
+	background-color: #FFF;
+}

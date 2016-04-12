@@ -10,8 +10,10 @@ require 'mvc1/mvc1.php';
 require 'config.php';
 require 'routes.php';
 
-
-// echo "i got a pretty url: ", $_SERVER['REQUEST_URI'], "\n";
+// ensure that the session is started even if automatic session starting isn't set in php
+if (session_status() == PHP_SESSION_NONE) {
+	session_start();
+}
 
 
 
@@ -23,5 +25,6 @@ if (strpos($path, $mvcConfig['pathBase']) !== 0) {
 	$path = substr($path, strlen($mvcConfig['pathBase']));
 }
 
-// invoke the controller with the parsed out path
+// invoke the router with the parsed out path
+// it will then go through a figure out which controller to invoke
 $router->invoke($path);

@@ -4,14 +4,21 @@
 
 class SetupController extends Controller {
 	public static $required = ['UserClassesDatabaseModel', 'UsersDatabaseModel', 'DatabaseModel'];
-	public static $inherited = ['UserErrorView'];
+	public static $inherited = ['UserErrorView', 'PopsicleHeaderView', 'PopsicleFooterView'];
 
 	public function invoke($args) {
 		if ($this->DatabaseModel->isSetup() === FALSE) {
-			echo "starting popsicle setup\n";
+?><!doctype html>
+<html>
+<head>
+	<title>Popsicle - Setup</title>
+</head>
+<body>
+<p>starting popsicle setup</p>
+<?php
 
 			$this->execute_setup_database();
-			echo "executed database setup\n";
+			echo "<p>executed database setup</p>";
 
 			$userClass = $this->UserClassesDatabaseModel->createClass('user', 10);
 			if ($userClass === NULL) {
@@ -21,7 +28,7 @@ class SetupController extends Controller {
 				'create_thread' => 1,
 				'create_post' => 1,
 			]);
-			echo "created 'user' class\n";
+			echo "<p>created 'user' class</p>";
 	
 			$moderatorClass = $this->UserClassesDatabaseModel->createClass('moderator', 1000);
 			if ($moderatorClass === NULL) {
@@ -36,7 +43,7 @@ class SetupController extends Controller {
 				'mute_user' => 1,
 			]);
 			$this->UserClassesDatabaseModel->setUserClassColor($moderatorClass, '0080C0');
-			echo "created 'moderator' class\n";
+			echo "<p>created 'moderator' class</p>";
 	
 			$adminClass = $this->UserClassesDatabaseModel->createClass('admin', 1000000);
 			if ($adminClass === NULL) {
@@ -58,14 +65,19 @@ class SetupController extends Controller {
 				'ban_user' => 1,
 			]);
 			$this->UserClassesDatabaseModel->setUserClassColor($adminClass, 'F00000');
-			echo "created 'admin' class\n";
+			echo "<p>created 'admin' class</p>";
 
 			$adminUser = $this->UsersDatabaseModel->createUser('admin', 'password', $adminClass->id);
 			if ($adminUser === NULL) {
 				die ('failed to create admin user');
 			}
-			echo "created 'admin' user with password 'password'\n";
+			echo "<p>created 'admin' user with password 'password'</p>";
 
+?>
+<p>done! now head over to the <a href='login'>login</a></p>
+</body>
+</html>
+<?php
 		} else {
 			$this->renderView('UserErrorView', ['invalid page']);
 		}

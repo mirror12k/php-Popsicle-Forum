@@ -7,7 +7,9 @@ class UserErrorView extends View {
 		$this->renderView('PopsicleHeaderView', [ 'title' => 'hello index!' ]);
 
 ?>
-<p>Error: <?php echo htmlentities($args[0]); ?></p>
+<div class='user_error'>
+	<p class='error_message'>Error: <?php echo htmlentities($args[0]); ?></p>
+</div>
 <?php
 
 		$this->renderView('PopsicleFooterView');

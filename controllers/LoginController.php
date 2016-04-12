@@ -22,7 +22,8 @@ class LoginController extends Controller {
 						if ($status === FALSE) { // failed login
 							$this->renderView('LoginView', ['error' => 'invalid login']);
 						} elseif ($status === TRUE) { // successful login
-							$this->redirect('forums');
+							global $mvcConfig;
+							$this->redirect($mvcConfig['pathBase'] . 'forums');
 							// echo "login success!";
 						} else { // else likely a ban message
 							$this->renderView('LoginView', ['error' => $status]);
@@ -55,7 +56,8 @@ class LoginController extends Controller {
 							if ($user === NULL) {
 								$this->renderView('RegisterView', ['error' => 'failed to create user']);
 							} else {
-								$this->redirect('login');
+								$this->renderView('LoginView', ['message' => 'account created successfully, please login now']);
+								// $this->redirect('login');
 								// echo "register success!";
 							}
 						}
@@ -79,7 +81,7 @@ class LoginController extends Controller {
 							$this->renderView('EditPasswordView', ['error' => 'password must be at least 8 characters']);
 						} else {
 							$this->UsersDatabaseModel->setUserPassword($user, $password);
-							echo "success!";
+							$this->renderView('EditPasswordView', ['message' => 'successfully changed password!']);
 						}
 					}
 				} else {
@@ -91,7 +93,7 @@ class LoginController extends Controller {
 				$this->renderView('UserErrorView', ['not logged in']);
 			} else {
 				$this->LoginModel->logoutUser();
-				$this->redirect('forums');
+				$this->renderView('LoginView', ['message' => 'successfully logged out']);
 			}
 		} else {
 			$this->renderView('UserErrorView', ['invalid page']);

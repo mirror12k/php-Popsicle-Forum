@@ -10,6 +10,7 @@ class LoginView extends View {
 
 ?>
 <div class='login_form'>
+	<?php if (isset($args['message'])) { echo "<p class='message'>" . htmlentities($args['message']) . "</p>"; } ?>
 	<?php if (isset($args['error'])) { echo "<p class='error_message'>" . htmlentities($args['error']) . "</p>"; } ?>
 	<p>Enter your username and password:</p>
 	<form action='<?php echo htmlentities($mvcConfig['pathBase'] . 'login'); ?>' method='POST'>

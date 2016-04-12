@@ -9,6 +9,7 @@ class EditPasswordView extends View {
 		
 ?>
 <div class='register_form'>
+	<?php if (isset($args['message'])) { echo "<p class='message'>" . htmlentities($args['message']) . "</p>"; } ?>
 	<?php if (isset($args['error'])) { echo "<p class='error_message'>" . htmlentities($args['error']) . "</p>"; } ?>
 	<p>Enter your desired password:</p>
 	<form action='<?php echo htmlentities($mvcConfig['pathBase'] . 'edit_password'); ?>' method='POST'>

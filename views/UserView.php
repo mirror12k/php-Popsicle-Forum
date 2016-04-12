@@ -59,6 +59,23 @@ class UserView extends View {
 <?php
 			}
 		}
+
+		if ($args['showChangeClass']) {
+?>
+<form action='<?php echo htmlentities($mvcConfig['pathBase'] . 'user/' . $user->id); ?>' method='POST'>
+	<input type='hidden' name='action' value='change_class' />
+	<select name='class'>
+<?php
+	foreach ($args['classesAvailable'] as $class) {
+		echo "<option value='" . $class->id . "'>" . htmlentities($class->name) . "</option>";
+	}
+?>
+	</select>
+	<input type='hidden' name='csrf_token' value='<?php echo htmlentities($this->CSRFTokenModel->get()); ?>' />
+	<button>set user class</button>
+</form>
+<?php
+		}
 ?>
 </div>
 <?php

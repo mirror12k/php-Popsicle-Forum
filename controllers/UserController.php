@@ -86,8 +86,19 @@ class UserController extends Controller {
 				$user = $this->LoginModel->getCurrentUser();
 				if ($user !== NULL) {
 					$userClass = $this->UserClassesDatabaseModel->getUserClassByUser($user);
-					$viewargs['showMuteUser'] = ($user !== NULL and $userClass->can('mute_user') and $targetClass->level < $userClass->level);
-					$viewargs['showBanUser'] = ($user !== NULL and $userClass->can('ban_user') and $targetClass->level < $userClass->level);
+					// decide which options to show
+					$viewargs['showMuteUser'] = ($userClass->can('mute_user') and $targetClass->level < $userClass->level);
+					$viewargs['showBanUser'] = ($userClass->can('ban_user') and $targetClass->level < $userClass->level);
+					$viewargs['showChangeClass'] = ($userClass->can('edit_lower_class'));
+					if ($viewargs['showChangeClass']) {
+						// add classes that we can set to this user
+						$viewargs['classesAvailable'] = [];
+						foreach ($this->UserClassesDatabaseModel->listUserClasses() as $class) {
+							if ($class->level < $userClass->level) {
+								array_push($viewargs['classesAvailable'], $class);
+							}
+						}
+					}
 				} else {
 					$viewargs['showMuteUser'] = FALSE;
 					$viewargs['showBanUser'] = FALSE;

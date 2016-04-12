@@ -78,6 +78,7 @@ class LoginController extends Controller {
 						if (strlen($password) < 8) {
 							$this->renderView('EditPasswordView', ['error' => 'password must be at least 8 characters']);
 						} else {
+							$this->UsersDatabaseModel->setUserPassword($user, $password);
 							echo "success!";
 						}
 					}
@@ -91,7 +92,6 @@ class LoginController extends Controller {
 			} else {
 				$this->LoginModel->logoutUser();
 				$this->redirect('forums');
-				// echo "logged out";
 			}
 		} else {
 			$this->renderView('UserErrorView', ['invalid page']);

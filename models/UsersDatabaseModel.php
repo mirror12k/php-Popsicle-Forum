@@ -226,6 +226,20 @@ class UsersDatabaseModel extends Model {
 		}
 	}
 
+	public function setUserPassword($user, $password) {
+		if ($user === NULL) {
+			die('attempt to change password to NULL user');
+		}
+		$id = (int)$user->id;
+
+		// regenerate the salt and securely hash the password
+		$salt = $this->generateSalt();
+		$password = $this->hashPassword($salt, (string)$password);
+
+		$result = $this->DatabaseModel->query("UPDATE `users` SET `password`='${password}' WHERE `id`=${id}");
+		return $result;
+	}
+
 	/**
 	* changes the user's ban status (0/1)
 	*/

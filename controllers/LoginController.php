@@ -70,11 +70,13 @@ class LoginController extends Controller {
 			if ($user === NULL) {
 				$this->renderView('UserErrorView', ['not logged in']);
 			} else {
-				if (isset($_POST['password']) and isset($_POST['repeat_password']) and isset($_POST['csrf_token'])) {
+				if (isset($_POST['old_password']) and isset($_POST['password']) and isset($_POST['repeat_password']) and isset($_POST['csrf_token'])) {
 					if (! $this->CSRFTokenModel->verify((string)$_POST['csrf_token'])) {
 						$this->renderView('EditPasswordView', ['error' => 'invalid csrf token']);
 					} elseif ($_POST['repeat_password'] !== $_POST['password']) {
 						$this->renderView('EditPasswordView', ['error' => 'repeat password doesnt match']);
+					} elseif (! $this->UsersDatabaseModel->verifyLogin($user->username, (string)$_POST['old_password'])) {
+						$this->renderView('EditPasswordView', ['error' => 'incorrect old password']);
 					} else {
 						$password = (string)$_POST['password'];
 						if (strlen($password) < 8) {

@@ -15,6 +15,7 @@ class EditPasswordView extends View {
 	<p>Enter your desired password:</p>
 	<form action='<?php echo htmlentities($mvcConfig['pathBase'] . 'edit_password'); ?>' method='POST'>
 		<?php if (isset($args['password_error'])) { echo "<p class='error_message'>" . htmlentities($args['password_error']) . "</p><br />"; } ?>
+		old password: <input type='password' name='old_password' placeholder='old password' /><br />
 		password: <input type='password' name='password' placeholder='password' /><br />
 		repeat password: <input type='password' name='repeat_password' placeholder='password' /><br />
 		<input type='hidden' name='csrf_token' value='<?php echo $this->CSRFTokenModel->get();?>' />

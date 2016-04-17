@@ -11,7 +11,7 @@ class PopsicleBBCodeView extends View {
 		$tagStack = [];
 		$bufferStack = [];
 		$offset = 0;
-		while (preg_match('/\[(\/?(?:b|i|u|s|url|img|code))\]|(.+?(?=\[|$))/', $text, $matches, PREG_OFFSET_CAPTURE, $offset)) {
+		while (preg_match('/\[(\/?(?:b|i|u|s|code|img|url|url=[^\]]+))\]|(.+?(?=\[|$))/', $text, $matches, PREG_OFFSET_CAPTURE, $offset)) {
 			$offset = $matches[0][1] + strlen($matches[0][0]);
 			// var_dump($matches);
 			if ($matches[1][1] > 0) {
@@ -19,14 +19,19 @@ class PopsicleBBCodeView extends View {
 				$tag = $matches[1][0];
 				if (substr($tag, 0, 1) === '/') {
 					$lastTag = array_pop($tagStack);
-					if ('/' . $lastTag === $tag) {
+					if (strpos($lastTag, '=') === FALSE) {
+						$lastType = $lastTag;
+					} else {
+						$lastType = substr($lastTag, 0, strpos($lastTag, '='));
+					}
+					if ('/' . $lastType === $tag) {
 						$rendered = $this->renderTag($lastTag, $textBuffer);
 						$textBuffer = array_pop($bufferStack);
 						$textBuffer .= $rendered;
 					} else {
 						$textBuffer = array_pop($bufferStack);
 						// invalid tag
-						echo 'invalid tag';
+						echo 'invalid tag: ' . $lastType . ' vs ' . $tag;
 					}
 				} else {
 					array_push($tagStack, $tag);
@@ -58,6 +63,13 @@ class PopsicleBBCodeView extends View {
 			return '<s>' . $text . '</s>';
 		} elseif ($tag === 'code') {
 			return '<pre>' . $text . '</pre>';
+		} elseif ($tag === 'img') {
+			$filtered = str_replace(['"', '\'', '<', '>', '\\'], '', $text);
+			if ((strpos($text, 'http://') === 0 or strpos($text, 'https://') === 0) and filter_var($filtered, FILTER_VALIDATE_URL)) {
+				return '<img src="' . $filtered . '" />';
+			} else {
+				return $text;
+			}
 		} elseif ($tag === 'url') {
 			$filtered = str_replace(['"', '\'', '<', '>', '\\'], '', $text);
 			if ((strpos($text, 'http://') === 0 or strpos($text, 'https://') === 0) and filter_var($filtered, FILTER_VALIDATE_URL)) {
@@ -65,10 +77,11 @@ class PopsicleBBCodeView extends View {
 			} else {
 				return $text;
 			}
-		} elseif ($tag === 'img') {
-			$filtered = str_replace(['"', '\'', '<', '>', '\\'], '', $text);
-			if ((strpos($text, 'http://') === 0 or strpos($text, 'https://') === 0) and filter_var($filtered, FILTER_VALIDATE_URL)) {
-				return '<img src="' . $filtered . '" />';
+		} elseif (strpos($tag, 'url=') === 0) {
+			$link = substr($tag, strlen('url='));
+			$filtered = str_replace(['"', '\'', '<', '>', '\\'], '', $link);
+			if ((strpos($link, 'http://') === 0 or strpos($link, 'https://') === 0) and filter_var($link, FILTER_VALIDATE_URL)) {
+				return '<a href="' . $link . '">' . $text . '</a>';
 			} else {
 				return $text;
 			}

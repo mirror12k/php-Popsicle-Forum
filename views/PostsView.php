@@ -4,7 +4,7 @@
 
 class PostsView extends View {
 	public static $required = ['CSRFTokenModel', 'UsersDatabaseModel'];
-	public static $inherited = ['PopsicleHeaderView', 'PopsicleFooterView', 'FancyUsernameView'];
+	public static $inherited = ['PopsicleHeaderView', 'PopsicleFooterView', 'FancyUsernameView', 'PopsicleBBCodeView'];
 	
 	public function render($args) {
 		global $mvcConfig;
@@ -29,7 +29,7 @@ class PostsView extends View {
 		}
 	?>
 	<div class='post_time'><?php echo htmlentities($post->timeposted) ?></div>
-	<div class='post_text'><p><?php echo htmlentities($post->text); ?></p></div>
+	<div class='post_text'><p><?php $this->renderView('PopsicleBBCodeView', [$post->text]); ?></p></div>
 </div>
 <?php
 		}

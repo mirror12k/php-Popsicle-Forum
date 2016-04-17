@@ -34,10 +34,11 @@ class PopsicleBBCodeView extends View {
 					$textBuffer = '';
 				}
 			} else {
-				$textBuffer .= htmlentities($matches[2][0]);
+				$textBuffer .= htmlentities($matches[2][0], ENT_QUOTES);
 			}
 		}
 
+		$result = '';
 		foreach ($bufferStack as $lostBuffer) {
 			$result .= $lostBuffer;
 		}
@@ -55,8 +56,22 @@ class PopsicleBBCodeView extends View {
 			return '<u>' . $text . '</u>';
 		} elseif ($tag === 's') {
 			return '<s>' . $text . '</s>';
-		// } elseif ($tag === 'url') {
-		// 	return '<a href="' . htmlentities($text, ENT_QUOTES) . '">' . $text . '</a>';
+		} elseif ($tag === 'code') {
+			return '<pre>' . $text . '</pre>';
+		} elseif ($tag === 'url') {
+			$filtered = str_replace(['"', '\'', '<', '>', '\\'], '', $text);
+			if ((strpos($text, 'http://') === 0 or strpos($text, 'https://') === 0) and filter_var($filtered, FILTER_VALIDATE_URL)) {
+				return '<a href="' . $filtered . '">' . $text . '</a>';
+			} else {
+				return $text;
+			}
+		} elseif ($tag === 'img') {
+			$filtered = str_replace(['"', '\'', '<', '>', '\\'], '', $text);
+			if ((strpos($text, 'http://') === 0 or strpos($text, 'https://') === 0) and filter_var($filtered, FILTER_VALIDATE_URL)) {
+				return '<img src="' . $filtered . '" />';
+			} else {
+				return $text;
+			}
 		} else {
 			die ("invalid tag: " . $tag);
 		}

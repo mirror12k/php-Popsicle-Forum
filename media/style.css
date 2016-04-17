@@ -58,6 +58,12 @@ body {
 	color: #CCC;
 }
 
+.post_quote {
+	background-color: #DDC;
+	margin: 5px;
+	padding: 10px;
+}
+
 .posts_list, .threads_list, .forums_list, .classes_list {
 	padding-left: 10%;
 	padding-right: 10%;

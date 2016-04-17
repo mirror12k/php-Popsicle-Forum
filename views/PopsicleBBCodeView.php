@@ -11,7 +11,7 @@ class PopsicleBBCodeView extends View {
 		$tagStack = [];
 		$bufferStack = [];
 		$offset = 0;
-		while (preg_match('/\[(\/?(?:b|i|u|s|code|img|url|url=[^\]]+))\]|(.+?(?=\[|$))/', $text, $matches, PREG_OFFSET_CAPTURE, $offset)) {
+		while (preg_match('/\[(\/?(?:b|i|u|s|code|img|url|url=[^\]]+|quote|quote=[^\]]+))\]|(.+?(?=\[|$))/', $text, $matches, PREG_OFFSET_CAPTURE, $offset)) {
 			$offset = $matches[0][1] + strlen($matches[0][0]);
 			// var_dump($matches);
 			if ($matches[1][1] > 0) {
@@ -63,6 +63,12 @@ class PopsicleBBCodeView extends View {
 			return '<s>' . $text . '</s>';
 		} elseif ($tag === 'code') {
 			return '<pre>' . $text . '</pre>';
+		} elseif ($tag === 'quote') {
+			return '<blockquote class="post_quote"><p>quote</p><p>' . $text . '</p></blockquote>';
+		} elseif (strpos($tag, 'quote=') === 0) {
+			$author = substr($tag, strlen('quote='));
+			return '<blockquote class="post_quote"><p>quote by ' . htmlentities($author) . '</p><p>' . $text . '</p></blockquote>';
+
 		} elseif ($tag === 'img') {
 			$filtered = str_replace(['"', '\'', '<', '>', '\\'], '', $text);
 			if ((strpos($text, 'http://') === 0 or strpos($text, 'https://') === 0) and filter_var($filtered, FILTER_VALIDATE_URL)) {

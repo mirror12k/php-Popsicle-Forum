@@ -71,8 +71,8 @@ class ListController extends Controller {
 					$this->renderView('UserErrorView', ['user muted']);
 				} elseif ($forum->locked) {
 					$this->renderView('UserErrorView', ['forum locked']);
-				} elseif (! preg_match('/^[a-zA-Z0-9][a-zA-Z0-9 ]*$/', (string)$_POST['title'])) {
-					$this->renderView('UserErrorView', ['thread title must be all alphanumeric or spaces with at least one character']);
+				} elseif (strlen((string)$_POST['title']) < 2) {
+					$this->renderView('UserErrorView', ['thread title must be at least two characters long']);
 				} elseif (strlen((string)$_POST['post']) < 1) {
 					$this->renderView('UserErrorView', ['thread post must be at least one character long']);
 				} else {
@@ -145,7 +145,12 @@ class ListController extends Controller {
 					if ($post === NULL) {
 						$this->renderView('UserErrorView', ['error creating post']);
 					} else {
-						$this->redirect($mvcConfig['pathBase'] . 'thread/' . $thread->id);
+						// refresh the thread object
+						$thread = $this->ThreadsDatabaseModel->getThreadById($thread->id);
+						global $popsicleConfig;
+						$count = $popsicleConfig['postsPerPage'];
+						$lastpage = (int)(($thread->postcount - 1) / $count);
+						$this->redirect($mvcConfig['pathBase'] . 'thread/' . $thread->id . '?index=' . $lastpage);
 					}
 				}
 			} else {

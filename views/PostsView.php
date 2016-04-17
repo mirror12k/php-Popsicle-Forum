@@ -48,7 +48,7 @@ class PostsView extends View {
 ?>
 <p>Reply:</p>
 <form action='<?php echo htmlentities($mvcConfig['pathBase'] . 'thread/' . $args['threadid']); ?>' method='POST'>
-	<input type='textarea' name='post' placeholder='text' />
+	<textarea name='post' cols=50 rows=10 ></textarea>
 	<input type='hidden' name='action' value='create_post' />
 	<input type='hidden' name='csrf_token' value='<?php echo htmlentities($this->CSRFTokenModel->get()); ?>' />
 	<button>submit</button>

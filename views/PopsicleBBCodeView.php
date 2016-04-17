@@ -6,12 +6,11 @@ class PopsicleBBCodeView extends View {
 	public function render($args) {
 		$text = $args[0];
 
-
 		$textBuffer = '';
 		$tagStack = [];
 		$bufferStack = [];
 		$offset = 0;
-		while (preg_match('/\[(\/(?:b|i|u|s|code|img|url|quote|size|color)|(?:b|i|u|s|code|img|url|url=[^\]]+|quote|quote=[^\]]+|size=\d{1,2}|color=#[a-fA-F0-9]{3}|color=#[a-fA-F0-9]{6}))\]|(.+?(?=\[|$))/',
+		while (preg_match('/\[(\/(?:b|i|u|s|code|img|url|quote|size|color)|(?:b|i|u|s|code|img|url|url=[^\]]+|quote|quote=[^\]]+|size=\d{1,2}|color=#[a-fA-F0-9]{3}|color=#[a-fA-F0-9]{6}))\]|(.+?(?=\[|$))/s',
 				$text, $matches, PREG_OFFSET_CAPTURE, $offset)) {
 			$offset = $matches[0][1] + strlen($matches[0][0]);
 			// var_dump($matches);
@@ -40,7 +39,7 @@ class PopsicleBBCodeView extends View {
 					$textBuffer = '';
 				}
 			} else {
-				$textBuffer .= htmlentities($matches[2][0], ENT_QUOTES);
+				$textBuffer .= str_replace("\n", "<br>", htmlentities($matches[2][0], ENT_QUOTES));
 			}
 		}
 

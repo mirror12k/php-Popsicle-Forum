@@ -23,6 +23,7 @@ class ThreadsView extends View {
 	: created by <?php echo $this->renderView('FancyUsernameView', [$this->UsersDatabaseModel->getUserById($thread->creatorid)]); ?>
 	: <?php echo $thread->postcount; ?> posts
 	<?php echo $thread->stickied ? ' : stickied ' : ''; ?>
+	<?php echo $thread->locked ? ' : locked ' : ''; ?>
 	: <a href="<?php echo htmlentities($mvcConfig['pathBase'] . 'thread/' . $thread->id . '?index=' . $latestPage); ?>">latest post</a>
 		by <?php echo $this->renderView('FancyUsernameView', [$latestPoster]); ?>
 	<span class='post_time'>
@@ -93,7 +94,7 @@ class ThreadsView extends View {
 <p>Create Thread:</p>
 <form action='<?php echo htmlentities($mvcConfig['pathBase'] . 'forum/' . $args['forumid']); ?>' method='POST'>
 	Title: <input type='text' name='title' placeholder='title' /><br />
-	Post: <input type='textarea' name='post' placeholder='text' />
+	Post: <textarea name='post' cols=50 rows=10 ></textarea>
 	<input type='hidden' name='action' value='create_thread' />
 	<input type='hidden' name='csrf_token' value='<?php echo htmlentities($this->CSRFTokenModel->get()); ?>' />
 	<button>submit</button>

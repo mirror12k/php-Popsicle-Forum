@@ -11,7 +11,8 @@ class PopsicleBBCodeView extends View {
 		$tagStack = [];
 		$bufferStack = [];
 		$offset = 0;
-		while (preg_match('/\[(\/?(?:b|i|u|s|code|img|url|url=[^\]]+|quote|quote=[^\]]+))\]|(.+?(?=\[|$))/', $text, $matches, PREG_OFFSET_CAPTURE, $offset)) {
+		while (preg_match('/\[(\/(?:b|i|u|s|code|img|url|quote|size|color)|(?:b|i|u|s|code|img|url|url=[^\]]+|quote|quote=[^\]]+|size=\d{1,2}|color=#[a-fA-F0-9]{3}|color=#[a-fA-F0-9]{6}))\]|(.+?(?=\[|$))/',
+				$text, $matches, PREG_OFFSET_CAPTURE, $offset)) {
 			$offset = $matches[0][1] + strlen($matches[0][0]);
 			// var_dump($matches);
 			if ($matches[1][1] > 0) {
@@ -29,9 +30,9 @@ class PopsicleBBCodeView extends View {
 						$textBuffer = array_pop($bufferStack);
 						$textBuffer .= $rendered;
 					} else {
-						$textBuffer = array_pop($bufferStack);
 						// invalid tag
-						echo 'invalid tag: ' . $lastType . ' vs ' . $tag;
+						// $textBuffer = array_pop($bufferStack);
+						// echo 'invalid tag: ';
 					}
 				} else {
 					array_push($tagStack, $tag);
@@ -68,6 +69,12 @@ class PopsicleBBCodeView extends View {
 		} elseif (strpos($tag, 'quote=') === 0) {
 			$author = substr($tag, strlen('quote='));
 			return '<blockquote class="post_quote"><p>quote by ' . htmlentities($author) . '</p><p>' . $text . '</p></blockquote>';
+		} elseif (strpos($tag, 'size=') === 0) {
+			$size = substr($tag, strlen('size='));
+			return '<span style="font-size:' . htmlentities($size) . 'px">' . $text . '</span>';
+		} elseif (strpos($tag, 'color=') === 0) {
+			$color = substr($tag, strlen('color='));
+			return '<span style="color:' . htmlentities($color) . '">' . $text . '</span>';
 
 		} elseif ($tag === 'img') {
 			$filtered = str_replace(['"', '\'', '<', '>', '\\'], '', $text);
